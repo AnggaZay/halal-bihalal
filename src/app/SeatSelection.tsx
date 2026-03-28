@@ -91,13 +91,14 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
     const seats = SEAT_LAYOUT[tableName];
     if (!seats) return null;
     
-    // ✨ Diubah: Sayap Kiri/Kanan menjadi 3 kolom (grid-cols-3), Dasar U menjadi 2 kolom (grid-cols-2) agar bentuknya persegi/grid.
-    const gridCols = tableName === "DASAR U" ? 'grid-cols-2' : 'grid-cols-3';
+    const isWing = tableName === "SAYAP KIRI" || tableName === "SAYAP KANAN";
+    // ✨ Diubah: Sayap (L/R) menjadi 1 kolom vertikal, dan Dasar U (B) menjadi 1 baris horizontal (4 kolom).
+    const gridCols = isWing ? 'grid-cols-1' : 'grid-cols-4';
 
     return (
       <div key={tableName} className="bg-[#101111]/40 border border-[#A6824A]/60 p-2 rounded-xl shadow-inner">
         <div className="text-[#E6E2DA] text-[10px] font-bold pb-2 text-center tracking-wider">{tableName}</div>
-        <div className={`grid ${gridCols} gap-2 place-items-center`}>
+        <div className={`grid ${gridCols} gap-2 place-items-center ${isWing ? 'w-10 mx-auto' : ''}`}>
           {seats.map(seatId => {
             const isBooked = bookedSeats.includes(seatId);
             const isSelected = selectedSeats.includes(seatId);

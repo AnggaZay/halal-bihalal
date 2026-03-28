@@ -437,7 +437,7 @@ export default function HalalBihalalPage() {
                   <div className="absolute top-16 md:top-24 left-8 md:left-16 -rotate-6 z-10 flex flex-col items-start opacity-100 drop-shadow-md">
                     <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-[#5D1E21] font-extrabold mb-1 pl-1">✧ Tema Utama</span>
                     <div className={`w-72 md:w-80 text-left text-5xl md:text-6xl text-[#5D1E21] leading-tight drop-shadow-lg ${parisienne.className}`}>
-                      Silaturahmi 11 Pimpinan Alumni
+                      Silaturahmi Lintas Pimpinan Alumni
                     </div>
                     <div className="flex items-center gap-2 mt-2 pl-1">
                       <div className="w-12 h-[2px] bg-[#5D1E21]/60"></div>
