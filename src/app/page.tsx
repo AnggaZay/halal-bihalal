@@ -397,7 +397,7 @@ export default function HalalBihalalPage() {
               <div className="world absolute top-0 left-0 w-[300vw] h-[100dvh] origin-[83.33%_70%]" style={{ willChange: 'transform' }}>
                 
                 {/* ROOM 1: 0 - 100vw */}
-                <img src="/images/bingkai-1.webp" alt="Bingkai 1" className="visual-bingkai-1 absolute bottom-[8%] left-[40vw] w-52 md:w-64 object-contain z-30" />
+                <img src="/images/bingkai-1.webp" alt="Bingkai 1" className="visual-bingkai-1 absolute bottom-[5%] left-[40vw] w-52 md:w-64 object-contain z-30" />
                 
                 {/* BOUNDARY: 100vw */}
                 <div className="visual-meja-group absolute bottom-0 left-[100vw] -translate-x-1/2 w-[32rem] z-20 origin-bottom">
