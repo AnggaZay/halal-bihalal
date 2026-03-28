@@ -27,7 +27,7 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
   useEffect(() => {
     const fetchBookedSeats = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("invitations")
         .select("seat_number")
         .not("seat_number", "is", null);
