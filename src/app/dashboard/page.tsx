@@ -9,8 +9,9 @@ const guestList: { [key: string]: { name: string; group?: string } } = {
   'warga-rt-05': { name: 'Seluruh Warga RT 05 / RW 02' },
 };
 
-export default function UndanganPage({ params }: { params: { slug: string } }) {
-  const guest = guestList[params.slug];
+export default async function UndanganPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const guest = guestList[resolvedParams.slug];
 
   // If the slug doesn't match any guest, show a 404 page
   if (!guest) {

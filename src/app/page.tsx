@@ -227,7 +227,7 @@ export default function HalalBihalalPage() {
       .from('invitations')
       .select('*')
       .eq('email', inputEmail)
-      .single();
+      .maybeSingle();
 
     if (existingData) {
       setInvitation(existingData as InvitationState);
@@ -591,16 +591,16 @@ export default function HalalBihalalPage() {
                                       <div className="pt-2">
                                         <label className="block text-xs font-medium mb-2 uppercase tracking-wider text-[#A6824A]">Kendaraan</label>
                                         <div className="grid grid-cols-2 gap-4">
-                                          <label>
-                                            <input type="radio" name={`vehicle_${i}`} value="Mobil" required className="sr-only peer" />
-                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl cursor-pointer text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all">
+                                  <label className="relative block cursor-pointer">
+                                    <input type="radio" name={`vehicle_${i}`} value="Mobil" required className="absolute opacity-0 w-full h-full peer z-10 cursor-pointer" />
+                                    <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all pointer-events-none">
                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path></svg>
                                               <span className="text-xs font-bold tracking-wide">MOBIL</span>
                                             </div>
                                           </label>
-                                          <label>
-                                            <input type="radio" name={`vehicle_${i}`} value="Motor" required className="sr-only peer" />
-                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl cursor-pointer text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all">
+                                  <label className="relative block cursor-pointer">
+                                    <input type="radio" name={`vehicle_${i}`} value="Motor" required className="absolute opacity-0 w-full h-full peer z-10 cursor-pointer" />
+                                    <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all pointer-events-none">
                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 16m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M19 16m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M7.5 14h5l4 -4h-10.5m1.5 4l4 -4"></path><path d="M13 6h2l1.5 3l2 4"></path></svg>
                                               <span className="text-xs font-bold tracking-wide">MOTOR</span>
                                             </div>
