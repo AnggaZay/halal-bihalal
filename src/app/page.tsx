@@ -464,7 +464,7 @@ export default function HalalBihalalPage() {
                 <div className="step4-content absolute inset-0 pointer-events-none opacity-0 translate-y-8 flex flex-col items-center justify-end pb-32">
                   <button 
                     onClick={() => setShowForm(true)}
-                    className="pointer-events-auto px-8 py-3.5 bg-[#5D1E21]/90 backdrop-blur-md text-[#E6E2DA] rounded-full font-medium tracking-[0.2em] uppercase text-[10px] md:text-xs shadow-2xl shadow-[#101111]/50 border border-[#A6824A]/50 hover:bg-[#A6824A] active:scale-95 transition-all flex items-center gap-2"
+                    className="pointer-events-auto px-8 py-3.5 bg-[#5D1E21] text-[#E6E2DA] rounded-full font-bold tracking-[0.2em] uppercase text-[10px] md:text-xs shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-[#A6824A]/70 hover:bg-[#A6824A] hover:text-[#101111] active:scale-95 transition-all flex items-center gap-2"
                   >
                     <span>Konfirmasi Kehadiran</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -502,7 +502,7 @@ export default function HalalBihalalPage() {
                         {!invitation ? (
                           <>
                             <h2 className="text-3xl font-bold text-[#A6824A] mb-6 text-center drop-shadow-md">Konfirmasi Kehadiran</h2>
-                            <form onSubmit={handleSubmit} className="w-full text-[#101111]">
+                            <form onSubmit={handleSubmit} className="w-full text-[#E6E2DA]">
                               <p className="text-xs text-[#E6E2DA]/80 mb-8 text-center">Isi data baru, atau masukkan email terdaftar untuk melihat tiket Anda.</p>
                               
                               <div className="space-y-6">
@@ -513,19 +513,19 @@ export default function HalalBihalalPage() {
                                 <div>
                                   <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Periode Pimpinan</label>
                                   <div className="relative">
-                                    <select name="periode" required className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
-                                      <option value="">Pilih Periode</option>
-                                    <option value="2002 - 2004">2002 – 2004</option>
-                                    <option value="2004 - 2006">2004 – 2006</option>
-                                    <option value="2006 - 2008">2006 – 2008</option>
-                                    <option value="2008 - 2010">2008 – 2010</option>
-                                    <option value="2010 - 2012">2010 – 2012</option>
-                                    <option value="2012 - 2014">2012 – 2014</option>
-                                    <option value="2014 - 2016">2014 – 2016</option>
-                                    <option value="2016 - 2018">2016 – 2018</option>
-                                    <option value="2018 - 2020">2018 – 2020</option>
-                                    <option value="2020 - 2022">2020 – 2022</option>
-                                    <option value="2022 - 2024">2022 – 2024</option>
+                                    <select name="periode" required className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
+                                      <option value="" className="bg-[#101111]">Pilih Periode</option>
+                                    <option value="2002 - 2004" className="bg-[#101111]">2002 – 2004</option>
+                                    <option value="2004 - 2006" className="bg-[#101111]">2004 – 2006</option>
+                                    <option value="2006 - 2008" className="bg-[#101111]">2006 – 2008</option>
+                                    <option value="2008 - 2010" className="bg-[#101111]">2008 – 2010</option>
+                                    <option value="2010 - 2012" className="bg-[#101111]">2010 – 2012</option>
+                                    <option value="2012 - 2014" className="bg-[#101111]">2012 – 2014</option>
+                                    <option value="2014 - 2016" className="bg-[#101111]">2014 – 2016</option>
+                                    <option value="2016 - 2018" className="bg-[#101111]">2016 – 2018</option>
+                                    <option value="2018 - 2020" className="bg-[#101111]">2018 – 2020</option>
+                                    <option value="2020 - 2022" className="bg-[#101111]">2020 – 2022</option>
+                                    <option value="2022 - 2024" className="bg-[#101111]">2022 – 2024</option>
                                   </select>
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -535,10 +535,10 @@ export default function HalalBihalalPage() {
                                 <div>
                                   <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Jumlah Tamu yang Hadir</label>
                                   <div className="relative">
-                                    <select value={guestCount} onChange={(e) => setGuestCount(Number(e.target.value))} className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
-                                      <option value={1}>1 Orang</option>
-                                    <option value={2}>2 Orang</option>
-                                    <option value={3}>3 Orang</option>
+                                    <select value={guestCount} onChange={(e) => setGuestCount(Number(e.target.value))} className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
+                                      <option value={1} className="bg-[#101111]">1 Orang</option>
+                                    <option value={2} className="bg-[#101111]">2 Orang</option>
+                                    <option value={3} className="bg-[#101111]">3 Orang</option>
                                   </select>
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -560,12 +560,12 @@ export default function HalalBihalalPage() {
                                       <div>
                                         <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Makanan</label>
                                         <div className="relative">
-                                          <select name={`food_menu_${i}`} required className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
-                                            <option value="">Pilih Makanan</option>
-                                          <option value="Nasi Sarden">Nasi Sarden</option>
-                                          <option value="Nasi Goreng">Nasi Goreng</option>
-                                          <option value="Nasi Ayam Bakar">Nasi Ayam Bakar</option>
-                                          <option value="Spaghetti Bolognese">Spaghetti Bolognese</option>
+                                          <select name={`food_menu_${i}`} required className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
+                                            <option value="" className="bg-[#101111]">Pilih Makanan</option>
+                                          <option value="Nasi Sarden" className="bg-[#101111]">Nasi Sarden</option>
+                                          <option value="Nasi Goreng" className="bg-[#101111]">Nasi Goreng</option>
+                                          <option value="Nasi Ayam Bakar" className="bg-[#101111]">Nasi Ayam Bakar</option>
+                                          <option value="Spaghetti Bolognese" className="bg-[#101111]">Spaghetti Bolognese</option>
                                         </select>
                                           <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -606,7 +606,7 @@ export default function HalalBihalalPage() {
                                 })}
                               </div>
 
-                              <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-lg shadow-[#A6824A]/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                              <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-[0_0_15px_rgba(166,130,74,0.2)] hover:shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-transparent hover:border-[#A6824A] disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
                                 {isSubmitting ? 'Memproses...' : 'Dapatkan Tiket'}
                               </button>
                             </form>

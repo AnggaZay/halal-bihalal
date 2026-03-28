@@ -80,7 +80,7 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
               </p>
               <button
                 onClick={() => setShowSuccess(false)}
-                className="w-full py-3.5 bg-[#5D1E21] text-[#E6E2DA] rounded-xl text-[10px] uppercase tracking-[0.2em] font-bold shadow-lg shadow-[#5D1E21]/20 active:scale-95 transition-all"
+                className="w-full py-3.5 bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] rounded-xl text-[10px] uppercase tracking-[0.2em] font-bold shadow-lg shadow-[#5D1E21]/20 active:scale-95 transition-all"
               >
                 Sama-sama! ❤️
               </button>
@@ -131,15 +131,15 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
             <select 
               required
               value={formData.kehadiran}
-              className="w-full p-4 bg-[#E6E2DA] border border-[#A6824A]/50 rounded-xl text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-[#5D1E21] transition-all text-[#101111]"
+              className="w-full p-4 bg-[#101111]/50 border border-[#A6824A]/50 rounded-xl text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-[#A6824A] transition-all text-[#E6E2DA]"
               onChange={(e) => setFormData({...formData, kehadiran: e.target.value})}
             >
-              <option value="">Pilih Kehadiran</option>
-              <option value="hadir">Hadir</option>
-              <option value="tidak_hadir">Tidak Hadir</option>
+              <option value="" className="bg-[#101111]">Pilih Kehadiran</option>
+              <option value="hadir" className="bg-[#101111]">Hadir</option>
+              <option value="tidak_hadir" className="bg-[#101111]">Tidak Hadir</option>
             </select>
             {/* Custom Arrow Icon */}
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#5D1E21]">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -164,8 +164,8 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
                   onChange={(e) => setFormData({...formData, jumlahTamu: e.target.value})}
                   value={formData.jumlahTamu}
                 >
-                  <option value="1">1 Orang</option>
-                  <option value="2">2 Orang (Berpasangan)</option>
+                  <option value="1" className="bg-[#101111]">1 Orang</option>
+                  <option value="2" className="bg-[#101111]">2 Orang (Berpasangan)</option>
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,7 +194,7 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
         <button 
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-4 bg-[#5D1E21] text-[#E6E2DA] rounded-xl text-xs uppercase tracking-[0.3em] font-bold shadow-lg shadow-[#5D1E21]/40 active:scale-95 transition-all mt-4 disabled:opacity-50"
+          className="w-full py-4 bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] rounded-xl text-xs uppercase tracking-[0.3em] font-bold shadow-[0_0_15px_rgba(166,130,74,0.2)] hover:shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-transparent hover:border-[#A6824A] active:scale-95 transition-all mt-4 disabled:opacity-50"
         >
           {isSubmitting ? "Mengirim..." : "Kirim Ucapan"}
         </button>
