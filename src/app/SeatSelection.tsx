@@ -12,9 +12,20 @@ const SEAT_LAYOUT: Record<string, string[]> = {
   "SAYAP KANAN": Array.from({ length: 18 }, (_, i) => `R${i + 1}`),
 };
 
+// ✨ Tipe data spesifik untuk pendingData menggantikan 'any'
+export interface PendingData {
+  email?: string;
+  full_name?: string;
+  periode?: string;
+  food_menu?: string;
+  drink_menu?: string;
+  vehicle?: string;
+  isNew?: boolean;
+}
+
 interface SeatSelectionProps {
   invitationId?: string;
-  pendingData?: any;
+  pendingData?: PendingData;
   guestCount: number;
   onBookingComplete: (updatedInvitation: unknown) => void;
 }
