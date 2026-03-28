@@ -316,7 +316,13 @@ export default function HalalBihalalPage() {
 
     const { data, error } = await supabase.from('invitations').insert(newData as never).select().single();
     
-    if (!error && data) setInvitation(data);
+    if (error) {
+      console.error("Supabase Error:", error);
+      alert(`Gagal memproses tiket: ${error.message}`);
+    } else if (data) {
+      setInvitation(data);
+    }
+
     setIsSubmitting(false);
   };
 
