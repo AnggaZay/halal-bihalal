@@ -30,10 +30,17 @@ export default function Kehadiran() {
       "qr-reader",
       {
         fps: 10,
-        qrbox: { width: 300, height: 300 },
+        qrbox: { width: 400, height: 400 }, // ✨ Perbesar area scan
         aspectRatio: 1.0,
         // Fokus hanya kamera, hapus opsi "Upload Gambar" agar UI rapi
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+        // ✨ KUNCI UTAMA: Minta resolusi kamera setinggi mungkin (Full HD)
+        videoConstraints: {
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 },
+          // Pastikan selalu pakai kamera belakang
+          facingMode: "environment"
+        }
       },
       false // Matikan mode verbose (log berisik di console)
     );
