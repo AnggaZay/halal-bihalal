@@ -1,101 +1,135 @@
 "use client";
 
-import React from 'react';
-import StatCard from '@/components/dashboard/StatCard';
-import Badge from '@/components/dashboard/Badge';
+import { useState } from "react";
 
-export default function DashboardOverview() {
+// Import Main Overview
+import MainOverview from "@/components/dashboard/main-overview";
+
+// Import Komponen Peserta
+import OverviewPeserta from "@/components/dashboard/peserta/overview-peserta";
+import DataPeserta from "@/components/dashboard/peserta/data-peserta";
+import Fasilitas from "@/components/dashboard/peserta/fasilitas";
+import Kehadiran from "@/components/dashboard/peserta/kehadiran";
+
+// Import Komponen Sumber Daya
+import OverviewSumberDaya from "@/components/dashboard/sumber-daya/overview-sumber-daya";
+import Keuangan from "@/components/dashboard/sumber-daya/keuangan";
+import Konsumsi from "@/components/dashboard/sumber-daya/konsumsi";
+import Perlengkapan from "@/components/dashboard/sumber-daya/perlengkapan";
+
+// Import Komponen Dokumen
+import Lpj from "@/components/dashboard/dokumen/lpj";
+import SewaTempat from "@/components/dashboard/dokumen/sewa-tempat";
+import Sponsorship from "@/components/dashboard/dokumen/sponsorship";
+
+export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState<"overview" | "peserta" | "sumber-daya" | "dokumen">("overview");
+
   return (
-    <div className="space-y-8 pb-8">
-      {/* Header Halaman */}
-      <div>
-        <h1 className="text-2xl font-bold text-[#101111]" style={{ fontFamily: "'Playfair Display', serif" }}>
-          Dashboard Overview
-        </h1>
-        <p className="text-sm text-[#6B7280] mt-1">Ringkasan data live acara Halal Bihalal saat ini.</p>
+    // Tambahkan padding bottom (pb-24) agar konten paling bawah tidak tertutup oleh bottom navigation
+    <div className="relative min-h-full pb-24">
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Dashboard Kepanitiaan</h1>
+          <p className="text-gray-500">Pantau dan kelola seluruh kebutuhan acara Anda di sini.</p>
+        </div>
+
+        {/* Konten Dashboard Berdasarkan Tab Aktif */}
+        <div className="mt-6">
+          {activeTab === "overview" && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <MainOverview />
+            </div>
+          )}
+
+          {activeTab === "peserta" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <OverviewPeserta />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <DataPeserta />
+                <Kehadiran />
+                <Fasilitas />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "sumber-daya" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <OverviewSumberDaya />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Keuangan />
+                <Konsumsi />
+                <Perlengkapan />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "dokumen" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Sponsorship />
+                <SewaTempat />
+                <Lpj />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Kartu Ringkasan (Stat Cards) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-        <StatCard
-          title="Total Kehadiran"
-          value="128"
-          description="Tamu telah check-in"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      {/* Bottom Tab Menu Navigation */}
+      <div className="fixed bottom-0 left-0 md:left-64 right-0 bg-white border-t border-gray-200 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div className="flex justify-around items-center h-16 max-w-7xl mx-auto px-2">
+          {/* Tab: Overview */}
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors rounded-lg mx-1 ${
+              activeTab === "overview" ? "text-blue-600" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50"
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span className="text-[10px] sm:text-xs font-medium">Overview</span>
+          </button>
+
+          {/* Tab: Peserta */}
+          <button
+            onClick={() => setActiveTab("peserta")}
+            className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors rounded-lg mx-1 ${
+              activeTab === "peserta" ? "text-blue-600" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50"
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-          }
-        />
-        <StatCard
-          title="Sisa Kursi"
-          value="42"
-          description="Dari total 170 kursi"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          }
-        />
-        <StatCard
-          title="Kapasitas Parkir Area"
-          value="85%"
-          description="Warmindo 17 hampir penuh"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l.8 4.8a2 2 0 001.97 1.67H16.23a2 2 0 001.97-1.67L19 10m-14 0h14M5 10V8a2 2 0 012-2h10a2 2 0 012 2v2m-14 0h14m-10 6v3m4-3v3" />
-            </svg>
-          }
-        />
-        <StatCard
-          title="RSVP Tertunda"
-          value="15"
-          description="Belum menentukan kursi"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          }
-        />
-      </div>
+            <span className="text-[10px] sm:text-xs font-medium">Peserta</span>
+          </button>
 
-      {/* Area Tabel Zebra Striping (Contoh Data Terbaru) */}
-      <div className="bg-[#FFFFFF] border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-[#F3F4F6]/30">
-          <h2 className="text-sm font-semibold text-[#101111] uppercase tracking-wide">Aktivitas RSVP Terkini</h2>
-          <button className="text-xs font-bold text-[#A6824A] hover:text-[#5D1E21] transition-colors uppercase tracking-widest">Lihat Semua</button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="bg-[#F3F4F6] text-[#6B7280] text-xs uppercase tracking-wider font-semibold">
-              <tr>
-                <th className="px-6 py-4">Nama Tamu</th>
-                <th className="px-6 py-4">Periode</th>
-                <th className="px-6 py-4">Nomor Kursi</th>
-                <th className="px-6 py-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-[#101111]">
-              <tr className="hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-medium">M. Amri Albani</td>
-                <td className="px-6 py-4 text-[#6B7280]">2002 - 2004</td>
-                <td className="px-6 py-4 font-mono font-medium text-[#A6824A]">A-01</td>
-                <td className="px-6 py-4"><Badge status="success">Hadir</Badge></td>
-              </tr>
-              <tr className="bg-gray-50/40 hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-medium">M. Taufiqurrahman</td>
-                <td className="px-6 py-4 text-[#6B7280]">2010 - 2012</td>
-                <td className="px-6 py-4 font-mono font-medium text-[#A6824A]">B-12</td>
-                <td className="px-6 py-4"><Badge status="success">Hadir</Badge></td>
-              </tr>
-              <tr className="hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-medium">M. Fikri Al-Khasani</td>
-                <td className="px-6 py-4 text-[#6B7280]">2020 - 2022</td>
-                <td className="px-6 py-4 font-mono text-[#6B7280]">-</td>
-                <td className="px-6 py-4"><Badge status="warning">Pending</Badge></td>
-              </tr>
-            </tbody>
-          </table>
+          {/* Tab: Sumber Daya */}
+          <button
+            onClick={() => setActiveTab("sumber-daya")}
+            className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors rounded-lg mx-1 ${
+              activeTab === "sumber-daya" ? "text-blue-600" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50"
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span className="text-[10px] sm:text-xs font-medium">SumbDaya</span>
+          </button>
+
+          {/* Tab: Dokumen */}
+          <button
+            onClick={() => setActiveTab("dokumen")}
+            className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors rounded-lg mx-1 ${
+              activeTab === "dokumen" ? "text-blue-600" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50"
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span className="text-[10px] sm:text-xs font-medium">Dokumen</span>
+          </button>
         </div>
       </div>
     </div>

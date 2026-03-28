@@ -575,10 +575,12 @@ export default function HalalBihalalPage() {
                                         <div className="relative">
                                           <select name={`food_menu_${i}`} required className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                             <option value="" className="bg-[#101111]">Pilih Makanan</option>
-                                          <option value="Nasi Sarden" className="bg-[#101111]">Nasi Sarden</option>
+                                          <option value="Rice Bowl Original" className="bg-[#101111]">Rice Bowl Original</option>
+                                          <option value="Rice Bowl Hot Lava" className="bg-[#101111]">Rice Bowl Hot Lava</option>
+                                          <option value="Rice Bowl Teriyaki" className="bg-[#101111]">Rice Bowl Teriyaki</option>
+                                          <option value="Rice Bowl Lada Hitam" className="bg-[#101111]">Rice Bowl Lada Hitam</option>
+                                          <option value="Nasi Ayam Bali" className="bg-[#101111]">Nasi Ayam Bali</option>
                                           <option value="Nasi Goreng" className="bg-[#101111]">Nasi Goreng</option>
-                                          <option value="Nasi Ayam Bakar" className="bg-[#101111]">Nasi Ayam Bakar</option>
-                                          <option value="Spaghetti Bolognese" className="bg-[#101111]">Spaghetti Bolognese</option>
                                         </select>
                                           <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>

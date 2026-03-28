@@ -91,20 +91,18 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
     const seats = SEAT_LAYOUT[tableName];
     if (!seats) return null;
     
-    const isWing = tableName === "SAYAP KIRI" || tableName === "SAYAP KANAN";
-    // ✨ Diubah: Sayap Kiri/Kanan menjadi 1 kolom memanjang, bukan 3 kolom.
-    const gridCols = isWing ? 'grid-cols-1' : 'grid-cols-4';
+    // ✨ Diubah: Sayap Kiri/Kanan menjadi 3 kolom (grid-cols-3), Dasar U menjadi 2 kolom (grid-cols-2) agar bentuknya persegi/grid.
+    const gridCols = tableName === "DASAR U" ? 'grid-cols-2' : 'grid-cols-3';
 
     return (
       <div key={tableName} className="bg-[#101111]/40 border border-[#A6824A]/60 p-2 rounded-xl shadow-inner">
         <div className="text-[#E6E2DA] text-[10px] font-bold pb-2 text-center tracking-wider">{tableName}</div>
-        {/* ✨ Untuk sayap, kita buat itemnya stretch agar memanjang, bukan center */}
-        <div className={`grid ${gridCols} gap-2 ${isWing ? 'place-items-stretch' : 'place-items-center'}`}>
+        <div className={`grid ${gridCols} gap-2 place-items-center`}>
           {seats.map(seatId => {
             const isBooked = bookedSeats.includes(seatId);
             const isSelected = selectedSeats.includes(seatId);
             return (
-              <button key={seatId} disabled={isBooked} onClick={() => handleSeatClick(seatId)} className={`rounded-lg font-bold text-[10px] flex items-center justify-center transition-all duration-200 disabled:cursor-not-allowed ${isBooked ? 'bg-red-500/30 text-red-200/30' : isSelected ? 'bg-[#A6824A] text-[#101111] ring-2 ring-offset-2 ring-offset-[#101111] ring-[#A6824A] scale-110 shadow-lg z-10' : 'bg-[#5D1E21]/30 text-[#E6E2DA] hover:bg-[#A6824A]/60 hover:scale-105'} ${isWing ? 'py-1' : 'aspect-square w-full'}`}>
+              <button key={seatId} disabled={isBooked} onClick={() => handleSeatClick(seatId)} className={`rounded-lg font-bold text-[10px] flex items-center justify-center transition-all duration-200 disabled:cursor-not-allowed aspect-square w-full ${isBooked ? 'bg-red-500/30 text-red-200/30' : isSelected ? 'bg-[#A6824A] text-[#101111] ring-2 ring-offset-2 ring-offset-[#101111] ring-[#A6824A] scale-110 shadow-lg z-10' : 'bg-[#5D1E21]/30 text-[#E6E2DA] hover:bg-[#A6824A]/60 hover:scale-105'}`}>
                 {seatId}
               </button>
             );
@@ -149,7 +147,7 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
             </div>
 
             {/* Bagian Dasar U */}
-            <div className="w-[90%] flex justify-center mt-4">
+            <div className="w-[35%] flex justify-center mt-4">
               {renderTable("DASAR U")}
             </div>
           </div>
