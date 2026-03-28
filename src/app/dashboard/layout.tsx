@@ -11,15 +11,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <p className="text-xs text-[#6B7280] mt-1">Sistem Informasi Eksekutif</p>
         </div>
         <nav className="p-4 space-y-2">
-          <Link href="/dashboard" className="block px-4 py-3 rounded-lg text-sm font-medium text-[#101111] hover:bg-[#F3F4F6] hover:text-[#A6824A] transition-colors">
+          <Link href="/dashboard" className="block px-4 py-3 rounded-lg text-sm font-medium bg-[#A6824A]/10 text-[#A6824A]">
             Overview
           </Link>
-          <Link href="/dashboard/citra-wicara" className="block px-4 py-3 rounded-lg text-sm font-medium bg-[#A6824A]/10 text-[#A6824A]">
-            Garda Citra Wicara (Humas)
+          <Link href="/dashboard/peserta" className="block px-4 py-3 rounded-lg text-sm font-medium text-[#101111] hover:bg-[#F3F4F6] hover:text-[#A6824A] transition-colors">
+            Peserta
           </Link>
-          <div className="block px-4 py-3 rounded-lg text-sm font-medium text-[#6B7280] opacity-50 cursor-not-allowed">
-            Kesekretariatan (Segera)
-          </div>
+          <Link href="/dashboard/dokumen" className="block px-4 py-3 rounded-lg text-sm font-medium text-[#101111] hover:bg-[#F3F4F6] hover:text-[#A6824A] transition-colors">
+            Dokumen
+          </Link>
+          <Link href="/dashboard/sumber-daya" className="block px-4 py-3 rounded-lg text-sm font-medium text-[#101111] hover:bg-[#F3F4F6] hover:text-[#A6824A] transition-colors">
+            Sumber Daya
+          </Link>
         </nav>
       </aside>
 

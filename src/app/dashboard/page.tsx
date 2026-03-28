@@ -1,149 +1,103 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import React from 'react';
+import StatCard from '@/components/dashboard/StatCard';
+import Badge from '@/components/dashboard/Badge';
 
-type InvitationState = {
-  id: string;
-  full_name: string;
-  periode: string;
-  is_present: boolean;
-  seat_number: string | null;
-};
-
-export default function CitraWicaraDashboard() {
-  const [invitations, setInvitations] = useState<InvitationState[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchData = async () => {
-    const { data, error } = await supabase.from('invitations').select('id, full_name, periode, is_present, seat_number');
-    if (data) setInvitations(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-
-    // Mengaktifkan Realtime Database. Begitu tamu ngisi data, dashboard terupdate!
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'invitations' }, () => {
-        fetchData();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const asistenData = [
-    {
-      nama: "M. Amri Albani",
-      periode: ["2002 - 2004", "2004 - 2006", "2006 - 2008", "2008 - 2010"],
-      wa: "+6289604795602"
-    },
-    {
-      nama: "M. Taufiqurrahman",
-      periode: ["2010 - 2012", "2012 - 2014", "2014 - 2016", "2016 - 2018"],
-      wa: "+6285800061638"
-    },
-    {
-      nama: "M. Fikri Al-Khasani",
-      periode: ["2018 - 2020", "2020 - 2022", "2022 - 2024"],
-      wa: "+6285137436224"
-    }
-  ];
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-[#A6824A]/30 border-t-[#A6824A] rounded-full animate-spin mb-4"></div>
-        <p className="text-[#6B7280] text-sm font-medium animate-pulse">Menghubungkan ke Database...</p>
-      </div>
-    );
-  }
-
-  // Algoritma menghitung jumlah kepala (Tamu) yang akan hadir
-  const totalRSVP = invitations.length;
-  const totalTamu = invitations.reduce((acc, curr) => {
-    const count = curr.full_name ? curr.full_name.split(',').length : 0;
-    return acc + count;
-  }, 0);
-  const totalPilihKursi = invitations.filter(i => i.seat_number && i.seat_number !== 'null').length;
-
+export default function DashboardOverview() {
   return (
-    <div className="max-w-6xl space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 pb-8">
+      {/* Header Halaman */}
       <div>
-        <h1 className="text-3xl font-bold text-[#101111] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Dashboard Garda Citra Wicara</h1>
-        <p className="text-[#6B7280] text-sm">Pemantauan progres penyebaran undangan dan pembagian asisten pertemuan.</p>
+        <h1 className="text-2xl font-bold text-[#101111]" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Dashboard Overview
+        </h1>
+        <p className="text-sm text-[#6B7280] mt-1">Ringkasan data live acara Halal Bihalal saat ini.</p>
       </div>
 
-      {/* AGENDA 1: MEMASTIKAN UNDANGAN */}
-      <section>
-        <h2 className="text-lg font-bold text-[#5D1E21] mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-[#5D1E21] text-white flex items-center justify-center text-xs">1</span>
-          Agenda 1: Kepastian Undangan (RSVP Masuk)
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#FFFFFF] p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-[#6B7280] text-sm mb-1 font-medium">Total Akun Mengisi Form</p>
-            <h3 className="text-4xl font-bold text-[#101111]">{totalRSVP}</h3>
-            <p className="text-xs text-[#A6824A] mt-2 font-medium">Form / Grup Keluarga yang mendaftar</p>
-          </div>
-          <div className="bg-[#FFFFFF] p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-[#6B7280] text-sm mb-1 font-medium">Estimasi Hadir (Kepala)</p>
-            <h3 className="text-4xl font-bold text-[#101111]">{totalTamu}</h3>
-            <p className="text-xs text-[#A6824A] mt-2 font-medium">Individu yang memakan porsi konsumsi</p>
-          </div>
-          <div className="bg-[#FFFFFF] p-6 rounded-xl border border-gray-200 shadow-sm">
-            <p className="text-[#6B7280] text-sm mb-1 font-medium">Selesai Pilih Kursi</p>
-            <h3 className="text-4xl font-bold text-[#101111]">{totalPilihKursi}</h3>
-            <p className="text-xs text-green-600 mt-2 font-medium">Tamu yang tiketnya sudah siap cetak</p>
-          </div>
+      {/* Kartu Ringkasan (Stat Cards) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+        <StatCard
+          title="Total Kehadiran"
+          value="128"
+          description="Tamu telah check-in"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          }
+        />
+        <StatCard
+          title="Sisa Kursi"
+          value="42"
+          description="Dari total 170 kursi"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          }
+        />
+        <StatCard
+          title="Kapasitas Parkir Area"
+          value="85%"
+          description="Warmindo 17 hampir penuh"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l.8 4.8a2 2 0 001.97 1.67H16.23a2 2 0 001.97-1.67L19 10m-14 0h14M5 10V8a2 2 0 012-2h10a2 2 0 012 2v2m-14 0h14m-10 6v3m4-3v3" />
+            </svg>
+          }
+        />
+        <StatCard
+          title="RSVP Tertunda"
+          value="15"
+          description="Belum menentukan kursi"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          }
+        />
+      </div>
+
+      {/* Area Tabel Zebra Striping (Contoh Data Terbaru) */}
+      <div className="bg-[#FFFFFF] border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-[#F3F4F6]/30">
+          <h2 className="text-sm font-semibold text-[#101111] uppercase tracking-wide">Aktivitas RSVP Terkini</h2>
+          <button className="text-xs font-bold text-[#A6824A] hover:text-[#5D1E21] transition-colors uppercase tracking-widest">Lihat Semua</button>
         </div>
-      </section>
-
-      {/* AGENDA 2: ASISTEN PERTEMUAN */}
-      <section>
-        <h2 className="text-lg font-bold text-[#5D1E21] mb-4 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-[#5D1E21] text-white flex items-center justify-center text-xs">2</span>
-          Agenda 2: Asisten Pertemuan (Pendampingan)
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {asistenData.map((asisten, idx) => {
-            // Filter data khusus untuk Asisten ini berdasarkan periode tanggung jawabnya
-            const filteredInvs = invitations.filter(i => asisten.periode.includes(i.periode));
-            const countRSVP = filteredInvs.length;
-            const countTamu = filteredInvs.reduce((acc, curr) => acc + (curr.full_name ? curr.full_name.split(',').length : 0), 0);
-
-            return (
-              <div key={idx} className="bg-[#FFFFFF] p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[#A6824A]/5 rounded-bl-[100px] -z-10"></div>
-                
-                <div className="w-12 h-12 bg-[#A6824A]/10 rounded-full flex items-center justify-center text-[#A6824A] mb-4 text-xl border border-[#A6824A]/20">👨‍💼</div>
-                <h3 className="font-bold text-[#101111] text-lg mb-1">{asisten.nama}</h3>
-                <div className="flex flex-wrap gap-1 mb-5">
-                  {asisten.periode.map(p => (
-                    <span key={p} className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-2 py-1 rounded-md font-medium">{p}</span>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-center bg-[#F3F4F6] p-3 rounded-lg border border-gray-200 mb-6">
-                  <div className="text-center w-1/2 border-r border-gray-300">
-                    <p className="text-xs text-[#6B7280] font-medium">Keluarga RSVP</p>
-                    <p className="font-bold text-[#101111] text-xl">{countRSVP}</p>
-                  </div>
-                  <div className="text-center w-1/2">
-                    <p className="text-xs text-[#6B7280] font-medium">Orang Hadir</p>
-                    <p className="font-bold text-[#5D1E21] text-xl">{countTamu}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="bg-[#F3F4F6] text-[#6B7280] text-xs uppercase tracking-wider font-semibold">
+              <tr>
+                <th className="px-6 py-4">Nama Tamu</th>
+                <th className="px-6 py-4">Periode</th>
+                <th className="px-6 py-4">Nomor Kursi</th>
+                <th className="px-6 py-4">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 text-[#101111]">
+              <tr className="hover:bg-gray-50/80 transition-colors">
+                <td className="px-6 py-4 font-medium">M. Amri Albani</td>
+                <td className="px-6 py-4 text-[#6B7280]">2002 - 2004</td>
+                <td className="px-6 py-4 font-mono font-medium text-[#A6824A]">A-01</td>
+                <td className="px-6 py-4"><Badge status="success">Hadir</Badge></td>
+              </tr>
+              <tr className="bg-gray-50/40 hover:bg-gray-50/80 transition-colors">
+                <td className="px-6 py-4 font-medium">M. Taufiqurrahman</td>
+                <td className="px-6 py-4 text-[#6B7280]">2010 - 2012</td>
+                <td className="px-6 py-4 font-mono font-medium text-[#A6824A]">B-12</td>
+                <td className="px-6 py-4"><Badge status="success">Hadir</Badge></td>
+              </tr>
+              <tr className="hover:bg-gray-50/80 transition-colors">
+                <td className="px-6 py-4 font-medium">M. Fikri Al-Khasani</td>
+                <td className="px-6 py-4 text-[#6B7280]">2020 - 2022</td>
+                <td className="px-6 py-4 font-mono text-[#6B7280]">-</td>
+                <td className="px-6 py-4"><Badge status="warning">Pending</Badge></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
