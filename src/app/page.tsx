@@ -232,6 +232,9 @@ export default function HalalBihalalPage() {
     if (existingData) {
       setInvitation(existingData as InvitationState);
       setIsSubmitting(false);
+      setTimeout(() => {
+        document.getElementById('rsvp-modal')?.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
       return;
     }
 
@@ -321,6 +324,9 @@ export default function HalalBihalalPage() {
       alert(`Gagal memproses tiket: ${error.message}`);
     } else if (data) {
       setInvitation(data);
+      setTimeout(() => {
+        document.getElementById('rsvp-modal')?.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     }
 
     setIsSubmitting(false);
@@ -485,6 +491,7 @@ export default function HalalBihalalPage() {
           <AnimatePresence>
             {showForm && (
               <motion.div
+                id="rsvp-modal"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
@@ -612,8 +619,15 @@ export default function HalalBihalalPage() {
                                 })}
                               </div>
 
-                              <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-[0_0_15px_rgba(166,130,74,0.2)] hover:shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-transparent hover:border-[#A6824A] disabled:opacity-50 disabled:cursor-not-allowed active:scale-95">
-                                {isSubmitting ? 'Memproses...' : 'Dapatkan Tiket'}
+                              <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-[0_0_15px_rgba(166,130,74,0.2)] hover:shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-transparent hover:border-[#A6824A] disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2">
+                                {isSubmitting ? 'Memproses...' : (
+                                  <>
+                                    <span>Lanjut Pilih Kursi</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                  </>
+                                )}
                               </button>
                             </form>
                           </>
