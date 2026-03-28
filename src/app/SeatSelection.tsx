@@ -13,12 +13,13 @@ const SEAT_LAYOUT: Record<string, string[]> = {
 };
 
 interface SeatSelectionProps {
-  invitationId: string;
+  invitationId?: string;
+  pendingData?: any;
   guestCount: number;
   onBookingComplete: (updatedInvitation: unknown) => void;
 }
 
-export default function SeatSelection({ invitationId, guestCount, onBookingComplete }: SeatSelectionProps) {
+export default function SeatSelection({ invitationId, pendingData, guestCount, onBookingComplete }: SeatSelectionProps) {
   const [bookedSeats, setBookedSeats] = useState<string[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,20 +67,40 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
     setIsSubmitting(true);
     const seatNumberString = selectedSeats.sort().join(', ');
 
-    const { data, error } = await supabase
-      .from('invitations')
-      .update({ seat_number: seatNumberString })
-      .eq('id', invitationId)
-      .select()
-      .single();
+    let resultData;
+    let resultError;
+
+    if (pendingData) {
+      // ✨ INSERT DATA BARU: Jika ini adalah tamu yang baru pertama kali mengisi form
+      const insertData = { ...pendingData, seat_number: seatNumberString };
+      delete insertData.isNew; // Buang flag isNew sebelum disimpan ke DB
+
+      const { data, error } = await supabase
+        .from('invitations')
+        .insert(insertData)
+        .select()
+        .single();
+      resultData = data;
+      resultError = error;
+    } else if (invitationId) {
+      // ✨ UPDATE DATA LAMA: Jika tamu pernah terdaftar tapi status kursinya null
+      const { data, error } = await supabase
+        .from('invitations')
+        .update({ seat_number: seatNumberString })
+        .eq('id', invitationId)
+        .select()
+        .single();
+      resultData = data;
+      resultError = error;
+    }
 
     setIsSubmitting(false);
 
-    if (error) {
+    if (resultError) {
       alert("Gagal mem-booking kursi. Mungkin kursi baru saja diambil. Halaman akan dimuat ulang.");
       window.location.reload();
     } else {
-      onBookingComplete(data);
+      onBookingComplete(resultData);
     }
   };
 

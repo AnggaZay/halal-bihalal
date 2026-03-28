@@ -315,19 +315,14 @@ export default function HalalBihalalPage() {
       is_sweet_drink: null, // Dinonaktifkan karena keterangan manis/tawar sudah nyatu di drink_menu
       vehicle: vehicles.join(', '),
       seat_number: null,
+      isNew: true, // ✨ Tambahkan flag ini untuk menandakan data belum masuk database
     };
 
-    const { data, error } = await supabase.from('invitations').insert(newData as never).select().single();
-    
-    if (error) {
-      console.error("Supabase Error:", error);
-      alert(`Gagal memproses tiket: ${error.message}`);
-    } else if (data) {
-      setInvitation(data);
-      setTimeout(() => {
-        document.getElementById('rsvp-modal')?.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
-    }
+    // ✨ Jangan langsung INSERT, simpan di state dulu untuk dilanjutkan ke pilih kursi
+    setInvitation(newData as InvitationState);
+    setTimeout(() => {
+      document.getElementById('rsvp-modal')?.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
 
     setIsSubmitting(false);
   };
@@ -636,7 +631,8 @@ export default function HalalBihalalPage() {
                           </>
                         ) : (!invitation.seat_number || invitation.seat_number === 'null' || String(invitation.seat_number).trim() === '') ? (
                           <SeatSelection
-                            invitationId={invitation.id as string}
+                            invitationId={invitation.id}
+                            pendingData={invitation.isNew ? invitation : undefined}
                             guestCount={invitation.full_name?.split(', ')?.length || 1}
                             onBookingComplete={handleBookingComplete}
                           />
