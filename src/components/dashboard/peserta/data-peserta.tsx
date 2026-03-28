@@ -84,8 +84,8 @@ export default function DataPeserta() {
   // Fungsi bantuan untuk menentukan asisten berdasarkan periode
   const getAsistenByPeriode = (periodeStr: string | undefined) => {
     if (!periodeStr) return { nama: "M. Fikri Al-Khasani" };
-    const tuaPeriods = ["2002 - 2004", "2004 - 2006", "2006 - 2008", "2008 - 2010"];
-    const agakTuaPeriods = ["2010 - 2012", "2012 - 2014", "2014 - 2016", "2016 - 2018"];
+    const tuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007"];
+    const agakTuaPeriods = ["2007/2009", "2009/2011", "2011/2013", "2013/2015"];
     
     if (tuaPeriods.includes(periodeStr)) {
       return { nama: "M. Amri Albani" };

@@ -243,9 +243,9 @@ export default function HalalBihalalPage() {
     let asistenNama = "";
     let asistenWA = "";
 
-    const tuaPeriods = ["2002 - 2004", "2004 - 2006", "2006 - 2008", "2008 - 2010"];
-    const agakTuaPeriods = ["2010 - 2012", "2012 - 2014", "2014 - 2016", "2016 - 2018"];
-    // Sisanya (2018 - 2024) adalah muda
+    const tuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007"];
+    const agakTuaPeriods = ["2007/2009", "2009/2011", "2011/2013", "2013/2015"];
+    // Sisanya (2015/2017 - 2021/2023) adalah muda
 
     if (tuaPeriods.includes(periode)) {
       asistenNama = "M. Amri Albani";
@@ -259,7 +259,7 @@ export default function HalalBihalalPage() {
     }
 
     // --- LOGIKA ALOKASI PARKIR ---
-    const parkirTuaPeriods = ["2002 - 2004", "2004 - 2006", "2006 - 2008", "2008 - 2010", "2010 - 2012", "2012 - 2014"];
+    const parkirTuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007", "2007/2009", "2009/2011"];
     const isParkirTua = parkirTuaPeriods.includes(periode);
 
     let warmindoMotorCount = 0;
@@ -352,8 +352,8 @@ export default function HalalBihalalPage() {
   // Fungsi bantuan untuk menentukan asisten berdasarkan periode dari data undangan yang sudah ada
   const getAsistenByPeriode = (periodeStr: string | undefined) => {
     if (!periodeStr) return { nama: "M. Fikri Al-Khasani", wa: "+6285137436224" };
-    const tuaPeriods = ["2002 - 2004", "2004 - 2006", "2006 - 2008", "2008 - 2010"];
-    const agakTuaPeriods = ["2010 - 2012", "2012 - 2014", "2014 - 2016", "2016 - 2018"];
+    const tuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007"];
+    const agakTuaPeriods = ["2007/2009", "2009/2011", "2011/2013", "2013/2015"];
     
     if (tuaPeriods.includes(periodeStr)) {
       return { nama: "M. Amri Albani", wa: "+6289604795602" };
@@ -528,17 +528,18 @@ export default function HalalBihalalPage() {
                                   <div className="relative">
                                     <select name="periode" required className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                       <option value="" className="bg-[#101111]">Pilih Periode</option>
-                                    <option value="2002 - 2004" className="bg-[#101111]">2002 – 2004</option>
-                                    <option value="2004 - 2006" className="bg-[#101111]">2004 – 2006</option>
-                                    <option value="2006 - 2008" className="bg-[#101111]">2006 – 2008</option>
-                                    <option value="2008 - 2010" className="bg-[#101111]">2008 – 2010</option>
-                                    <option value="2010 - 2012" className="bg-[#101111]">2010 – 2012</option>
-                                    <option value="2012 - 2014" className="bg-[#101111]">2012 – 2014</option>
-                                    <option value="2014 - 2016" className="bg-[#101111]">2014 – 2016</option>
-                                    <option value="2016 - 2018" className="bg-[#101111]">2016 – 2018</option>
-                                    <option value="2018 - 2020" className="bg-[#101111]">2018 – 2020</option>
-                                    <option value="2020 - 2022" className="bg-[#101111]">2020 – 2022</option>
-                                    <option value="2022 - 2024" className="bg-[#101111]">2022 – 2024</option>
+                                      <option value="2021/2023" className="bg-[#101111]">2021/2023</option>
+                                      <option value="2019/2021" className="bg-[#101111]">2019/2021</option>
+                                      <option value="2017/2019" className="bg-[#101111]">2017/2019</option>
+                                      <option value="2015/2017" className="bg-[#101111]">2015/2017</option>
+                                      <option value="2013/2015" className="bg-[#101111]">2013/2015</option>
+                                      <option value="2011/2013" className="bg-[#101111]">2011/2013</option>
+                                      <option value="2009/2011" className="bg-[#101111]">2009/2011</option>
+                                      <option value="2007/2009" className="bg-[#101111]">2007/2009</option>
+                                      <option value="2005/2007" className="bg-[#101111]">2005/2007</option>
+                                      <option value="2003/2005" className="bg-[#101111]">2003/2005</option>
+                                      <option value="2001/2003" className="bg-[#101111]">2001/2003</option>
+                                      <option value="1999/2001" className="bg-[#101111]">1999/2001</option>
                                   </select>
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
