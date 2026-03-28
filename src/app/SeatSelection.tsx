@@ -84,7 +84,7 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
   };
 
   if (isLoading) {
-    return <div className="text-center text-white animate-pulse">Memuat denah kursi...</div>;
+    return <div className="text-center text-[#E6E2DA] animate-pulse">Memuat denah kursi...</div>;
   }
 
   const renderTable = (tableName: string) => {
@@ -96,15 +96,15 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
     const gridCols = isWing ? 'grid-cols-1' : 'grid-cols-4';
 
     return (
-      <div key={tableName} className="bg-black/40 border border-emerald-800/60 p-2 rounded-xl shadow-inner">
-        <div className="text-emerald-200 text-[10px] font-bold pb-2 text-center tracking-wider">{tableName}</div>
+      <div key={tableName} className="bg-[#101111]/40 border border-[#A6824A]/60 p-2 rounded-xl shadow-inner">
+        <div className="text-[#E6E2DA] text-[10px] font-bold pb-2 text-center tracking-wider">{tableName}</div>
         {/* ✨ Untuk sayap, kita buat itemnya stretch agar memanjang, bukan center */}
         <div className={`grid ${gridCols} gap-2 ${isWing ? 'place-items-stretch' : 'place-items-center'}`}>
           {seats.map(seatId => {
             const isBooked = bookedSeats.includes(seatId);
             const isSelected = selectedSeats.includes(seatId);
             return (
-              <button key={seatId} disabled={isBooked} onClick={() => handleSeatClick(seatId)} className={`rounded-lg font-bold text-[10px] flex items-center justify-center transition-all duration-200 disabled:cursor-not-allowed ${isBooked ? 'bg-red-500/30 text-red-200/30' : isSelected ? 'bg-yellow-500 text-black ring-2 ring-offset-2 ring-offset-emerald-950 ring-yellow-400 scale-110 shadow-lg z-10' : 'bg-emerald-600/30 text-emerald-100 hover:bg-emerald-500/60 hover:scale-105'} ${isWing ? 'py-1' : 'aspect-square w-full'}`}>
+              <button key={seatId} disabled={isBooked} onClick={() => handleSeatClick(seatId)} className={`rounded-lg font-bold text-[10px] flex items-center justify-center transition-all duration-200 disabled:cursor-not-allowed ${isBooked ? 'bg-red-500/30 text-red-200/30' : isSelected ? 'bg-[#A6824A] text-[#101111] ring-2 ring-offset-2 ring-offset-[#101111] ring-[#A6824A] scale-110 shadow-lg z-10' : 'bg-[#5D1E21]/30 text-[#E6E2DA] hover:bg-[#A6824A]/60 hover:scale-105'} ${isWing ? 'py-1' : 'aspect-square w-full'}`}>
                 {seatId}
               </button>
             );
@@ -117,16 +117,16 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
   return (
     <div className="w-full max-w-md mx-auto px-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h2 className="text-3xl font-bold text-emerald-400 mb-2 text-center">Pilih Tempat Duduk</h2>
-        <p className="text-center text-emerald-300/80 text-sm mb-8">Silakan pilih {guestCount} kursi yang tersedia.</p>
+        <h2 className="text-3xl font-bold text-[#A6824A] mb-2 text-center">Pilih Tempat Duduk</h2>
+        <p className="text-center text-[#E6E2DA]/80 text-sm mb-8">Silakan pilih {guestCount} kursi yang tersedia.</p>
 
-        <div className="p-4 rounded-2xl bg-black/20 border border-emerald-800/50 shadow-2xl backdrop-blur-sm relative">
+        <div className="p-4 rounded-2xl bg-[#101111]/20 border border-[#A6824A]/50 shadow-2xl backdrop-blur-sm relative">
           
           {/* Label Panggung */}
-          <div className="w-full text-center text-emerald-500/50 text-[10px] mb-6 font-bold tracking-[0.3em] border-b border-emerald-800/30 pb-3 uppercase flex items-center justify-center gap-2">
-            <span className="w-8 h-[1px] bg-emerald-800/50"></span>
+          <div className="w-full text-center text-[#A6824A]/50 text-[10px] mb-6 font-bold tracking-[0.3em] border-b border-[#A6824A]/30 pb-3 uppercase flex items-center justify-center gap-2">
+            <span className="w-8 h-[1px] bg-[#A6824A]/50"></span>
             Area Panggung
-            <span className="w-8 h-[1px] bg-emerald-800/50"></span>
+            <span className="w-8 h-[1px] bg-[#A6824A]/50"></span>
           </div>
 
           <div className="flex flex-col items-center w-full relative z-10">
@@ -138,7 +138,7 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
               </div>
 
               {/* Area Tengah (Meja Besar) */}
-              <div className="w-[10%] flex flex-col items-center justify-center text-emerald-500/50 text-[10px] font-bold uppercase tracking-[0.3em] text-center">
+              <div className="w-[10%] flex flex-col items-center justify-center text-[#A6824A]/50 text-[10px] font-bold uppercase tracking-[0.3em] text-center">
                 Meja<br/>Besar
               </div>
 
@@ -155,12 +155,12 @@ export default function SeatSelection({ invitationId, guestCount, onBookingCompl
           </div>
         </div>
 
-        <p className="text-[10px] text-emerald-300/60 text-center mt-5 mb-1 px-4 italic leading-relaxed">
+        <p className="text-[10px] text-[#E6E2DA]/60 text-center mt-5 mb-1 px-4 italic leading-relaxed">
           *Catatan: Layout dan letak kursi dapat berubah sewaktu-waktu menyesuaikan kondisi aktual di lokasi acara.
         </p>
 
         <button onClick={handleSubmitBooking} disabled={isSubmitting || selectedSeats.length !== guestCount}
-          className="w-full bg-yellow-500 hover:bg-yellow-400 text-black p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-5 shadow-lg shadow-yellow-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+          className="w-full bg-[#A6824A] hover:bg-[#5D1E21] text-[#101111] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-5 shadow-lg shadow-[#A6824A]/20 disabled:opacity-50 disabled:cursor-not-allowed">
           {isSubmitting ? "Mem-booking..." : "Konfirmasi Kursi"}
         </button>
       </motion.div>

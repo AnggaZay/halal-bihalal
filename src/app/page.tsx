@@ -355,15 +355,15 @@ export default function HalalBihalalPage() {
   return (
     <>
       {/* Peringatan Desktop */}
-      <div className="hidden md:flex fixed inset-0 z-[9999] bg-slate-900 items-center justify-center text-white p-8 text-center">
+      <div className="hidden md:flex fixed inset-0 z-[9999] bg-[#101111] items-center justify-center text-[#E6E2DA] p-8 text-center">
         <div className="max-w-md">
           <div className="text-6xl mb-6">📱</div>
-          <h1 className="text-3xl font-bold mb-4 text-yellow-500">Akses Dibatasi</h1>
-          <p className="text-lg text-slate-300">Website ini hanya bisa diakses melalui mobile/smartphone. Silakan buka melalui HP Anda.</p>
+          <h1 className="text-3xl font-bold mb-4 text-[#A6824A]">Akses Dibatasi</h1>
+          <p className="text-lg text-[#E6E2DA]">Website ini hanya bisa diakses melalui mobile/smartphone. Silakan buka melalui HP Anda.</p>
         </div>
       </div>
 
-      <main ref={mainRef} className="relative bg-gray-50 w-full min-h-screen md:hidden">
+      <main ref={mainRef} className="relative bg-[#101111] w-full min-h-screen md:hidden">
       
       {/* MENGHILANGKAN AnimatePresence YANG MEMBUAT BUG KLIK DI HP, GANTI KE CSS TRANSITION MURNI */}
       {isCoverMounted && (
@@ -423,13 +423,13 @@ export default function HalalBihalalPage() {
                   
                   {/* ✨ Tema Acara Part 1 (Host) */}
                   <div className="absolute top-16 md:top-24 left-8 md:left-16 -rotate-6 z-10 flex flex-col items-start opacity-100 drop-shadow-md">
-                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-amber-950 font-extrabold mb-1 pl-1">✧ Tema Utama</span>
-                    <div className={`w-72 md:w-80 text-left text-5xl md:text-6xl text-amber-950 leading-tight drop-shadow-lg ${parisienne.className}`}>
+                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-[#5D1E21] font-extrabold mb-1 pl-1">✧ Tema Utama</span>
+                    <div className={`w-72 md:w-80 text-left text-5xl md:text-6xl text-[#5D1E21] leading-tight drop-shadow-lg ${parisienne.className}`}>
                       Silaturahmi 11 Pimpinan Alumni
                     </div>
                     <div className="flex items-center gap-2 mt-2 pl-1">
-                      <div className="w-12 h-[2px] bg-amber-950/60"></div>
-                      <span className="text-[9px] md:text-[11px] uppercase tracking-[0.3em] font-bold text-amber-950/80">Lintas Generasi</span>
+                      <div className="w-12 h-[2px] bg-[#5D1E21]/60"></div>
+                      <span className="text-[9px] md:text-[11px] uppercase tracking-[0.3em] font-bold text-[#5D1E21]/80">Lintas Generasi</span>
                     </div>
                   </div>
                   {/* Konten Frame 1 (Host) dikosongkan agar info event muncul bersama papan */}
@@ -440,15 +440,15 @@ export default function HalalBihalalPage() {
                   
                   {/* ✨ Tema Acara Part 2 (Co-Host) */}
                   <div className="absolute top-16 md:top-24 right-8 md:right-16 rotate-6 z-10 flex flex-col items-end opacity-100 drop-shadow-md">
-                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-amber-950 font-extrabold mb-1 pr-1">Agenda Bersama ✧</span>
-                    <div className={`w-80 md:w-96 text-right text-5xl md:text-6xl text-amber-950 leading-tight drop-shadow-lg ${parisienne.className}`}>
+                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-[#5D1E21] font-extrabold mb-1 pr-1">Agenda Bersama ✧</span>
+                    <div className={`w-80 md:w-96 text-right text-5xl md:text-6xl text-[#5D1E21] leading-tight drop-shadow-lg ${parisienne.className}`}>
                       Mengembalikan Eksistensi
                       <br />
                       Organisasi External
                     </div>
                     <div className="flex items-center gap-2 mt-2 pr-1">
-                      <span className="text-[9px] md:text-[11px] uppercase tracking-[0.3em] font-bold text-amber-950/80">Sinergi & Kolaborasi</span>
-                      <div className="w-12 h-[2px] bg-amber-950/60"></div>
+                      <span className="text-[9px] md:text-[11px] uppercase tracking-[0.3em] font-bold text-[#5D1E21]/80">Sinergi & Kolaborasi</span>
+                      <div className="w-12 h-[2px] bg-[#5D1E21]/60"></div>
                     </div>
                   </div>
 
@@ -464,7 +464,7 @@ export default function HalalBihalalPage() {
                 <div className="step4-content absolute inset-0 pointer-events-none opacity-0 translate-y-8 flex flex-col items-center justify-end pb-32">
                   <button 
                     onClick={() => setShowForm(true)}
-                    className="pointer-events-auto px-8 py-3.5 bg-emerald-800/90 backdrop-blur-md text-emerald-50 rounded-full font-medium tracking-[0.2em] uppercase text-[10px] md:text-xs shadow-2xl shadow-emerald-900/50 border border-emerald-600/50 hover:bg-emerald-700 active:scale-95 transition-all flex items-center gap-2"
+                    className="pointer-events-auto px-8 py-3.5 bg-[#5D1E21]/90 backdrop-blur-md text-[#E6E2DA] rounded-full font-medium tracking-[0.2em] uppercase text-[10px] md:text-xs shadow-2xl shadow-[#101111]/50 border border-[#A6824A]/50 hover:bg-[#A6824A] active:scale-95 transition-all flex items-center gap-2"
                   >
                     <span>Konfirmasi Kehadiran</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -483,13 +483,13 @@ export default function HalalBihalalPage() {
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}
                 transition={{ duration: 0.6, ease: "easeInOut" }}
-                className="fixed inset-0 z-[200] flex flex-col overflow-y-auto overscroll-contain bg-emerald-950/95 backdrop-blur-md"
+                className="fixed inset-0 z-[200] flex flex-col overflow-y-auto overscroll-contain bg-[#101111]/95 backdrop-blur-md"
               >
                 <div className="w-full pointer-events-auto min-h-full flex flex-col relative">
                   {/* Tombol Close */}
                   <button
                     onClick={() => setShowForm(false)}
-                    className="absolute top-6 right-6 z-50 p-2 bg-white/10 backdrop-blur-sm rounded-full text-white hover:bg-white/20 transition-all"
+                    className="absolute top-6 right-6 z-50 p-2 bg-[#E6E2DA]/10 backdrop-blur-sm rounded-full text-[#E6E2DA] hover:bg-[#E6E2DA]/20 transition-all"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -501,19 +501,19 @@ export default function HalalBihalalPage() {
                       <div className="max-w-md mx-auto w-full px-6">
                         {!invitation ? (
                           <>
-                            <h2 className="text-3xl font-bold text-emerald-400 mb-6 text-center drop-shadow-md">Konfirmasi Kehadiran</h2>
-                            <form onSubmit={handleSubmit} className="w-full text-gray-800">
-                              <p className="text-xs text-emerald-300/80 mb-8 text-center">Isi data baru, atau masukkan email terdaftar untuk melihat tiket Anda.</p>
+                            <h2 className="text-3xl font-bold text-[#A6824A] mb-6 text-center drop-shadow-md">Konfirmasi Kehadiran</h2>
+                            <form onSubmit={handleSubmit} className="w-full text-[#101111]">
+                              <p className="text-xs text-[#E6E2DA]/80 mb-8 text-center">Isi data baru, atau masukkan email terdaftar untuk melihat tiket Anda.</p>
                               
                               <div className="space-y-6">
                                 <div>
-                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-emerald-400">Email</label>
-                                  <input name="email" type="email" required placeholder="email@contoh.com" className="w-full bg-transparent border-0 border-b-2 border-emerald-700/50 text-white placeholder:text-emerald-200/50 py-3 px-1 text-sm focus:outline-none focus:ring-0 focus:border-emerald-400 transition-colors" />
+                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Email</label>
+                                  <input name="email" type="email" required placeholder="email@contoh.com" className="w-full bg-transparent border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] placeholder:text-[#E6E2DA]/50 py-3 px-1 text-sm focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors" />
                                 </div>
                                 <div>
-                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-emerald-400">Periode Pimpinan</label>
+                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Periode Pimpinan</label>
                                   <div className="relative">
-                                    <select name="periode" required className="w-full bg-emerald-900 border-0 border-b-2 border-emerald-700/50 text-white py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-emerald-400 transition-colors appearance-none">
+                                    <select name="periode" required className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                       <option value="">Pilih Periode</option>
                                     <option value="2002 - 2004">2002 – 2004</option>
                                     <option value="2004 - 2006">2004 – 2006</option>
@@ -527,20 +527,20 @@ export default function HalalBihalalPage() {
                                     <option value="2020 - 2022">2020 – 2022</option>
                                     <option value="2022 - 2024">2022 – 2024</option>
                                   </select>
-                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-400">
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                     </div>
                                   </div>
                                 </div>
                                 <div>
-                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-emerald-400">Jumlah Tamu yang Hadir</label>
+                                  <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Jumlah Tamu yang Hadir</label>
                                   <div className="relative">
-                                    <select value={guestCount} onChange={(e) => setGuestCount(Number(e.target.value))} className="w-full bg-emerald-900 border-0 border-b-2 border-emerald-700/50 text-white py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-emerald-400 transition-colors appearance-none">
+                                    <select value={guestCount} onChange={(e) => setGuestCount(Number(e.target.value))} className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                       <option value={1}>1 Orang</option>
                                     <option value={2}>2 Orang</option>
                                     <option value={3}>3 Orang</option>
                                   </select>
-                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-400">
+                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                     </div>
                                   </div>
@@ -549,52 +549,52 @@ export default function HalalBihalalPage() {
                                 {Array.from({ length: guestCount }).map((_, idx) => {
                                   const i = idx + 1;
                                   return (
-                                    <div key={i} className="space-y-6 pt-6 mt-6 border-t border-emerald-800/60">
-                                      <p className="text-sm font-bold text-emerald-300">Data Tamu {i}</p>
+                                    <div key={i} className="space-y-6 pt-6 mt-6 border-t border-[#A6824A]/60">
+                                      <p className="text-sm font-bold text-[#E6E2DA]">Data Tamu {i}</p>
                                       
                                       <div>
-                                        <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-emerald-400">Nama Lengkap</label>
-                                        <input name={`nama_${i}`} required placeholder={`Nama Tamu ${i}`} className="w-full bg-transparent border-0 border-b-2 border-emerald-700/50 text-white placeholder:text-emerald-200/50 py-3 px-1 text-sm focus:outline-none focus:ring-0 focus:border-emerald-400 transition-colors" />
+                                        <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Nama Lengkap</label>
+                                        <input name={`nama_${i}`} required placeholder={`Nama Tamu ${i}`} className="w-full bg-transparent border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] placeholder:text-[#E6E2DA]/50 py-3 px-1 text-sm focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors" />
                                       </div>
                                       
                                       <div>
-                                        <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-emerald-400">Makanan</label>
+                                        <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Makanan</label>
                                         <div className="relative">
-                                          <select name={`food_menu_${i}`} required className="w-full bg-emerald-900 border-0 border-b-2 border-emerald-700/50 text-white py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-emerald-400 transition-colors appearance-none">
+                                          <select name={`food_menu_${i}`} required className="w-full bg-[#101111]/80 border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                             <option value="">Pilih Makanan</option>
                                           <option value="Nasi Sarden">Nasi Sarden</option>
                                           <option value="Nasi Goreng">Nasi Goreng</option>
                                           <option value="Nasi Ayam Bakar">Nasi Ayam Bakar</option>
                                           <option value="Spaghetti Bolognese">Spaghetti Bolognese</option>
                                         </select>
-                                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-400">
+                                          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                                           </div>
                                         </div>
                                       </div>
                                       
                                       <div>
-                                        <label className="block text-xs font-medium mb-2 uppercase tracking-wider text-emerald-400">Minuman</label>
+                                        <label className="block text-xs font-medium mb-2 uppercase tracking-wider text-[#A6824A]">Minuman</label>
                                         <div className="space-y-3 pt-2">
-                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="es_teh_manis" required className="w-4 h-4 accent-emerald-500 bg-transparent border-emerald-600 text-emerald-500 focus:ring-emerald-500" /><span className="text-sm text-emerald-100 font-medium">Es Teh Manis</span></label>
-                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="es_teh_tawar" required className="w-4 h-4 accent-emerald-500 bg-transparent border-emerald-600 text-emerald-500 focus:ring-emerald-500" /><span className="text-sm text-emerald-100 font-medium">Es Teh Tawar</span></label>
-                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="air_mineral" required className="w-4 h-4 accent-emerald-500 bg-transparent border-emerald-600 text-emerald-500 focus:ring-emerald-500" /><span className="text-sm text-emerald-100 font-medium">Air Mineral</span></label>
+                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="es_teh_manis" required className="w-4 h-4 accent-[#A6824A] bg-transparent border-[#A6824A] text-[#A6824A] focus:ring-[#A6824A]" /><span className="text-sm text-[#E6E2DA] font-medium">Es Teh Manis</span></label>
+                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="es_teh_tawar" required className="w-4 h-4 accent-[#A6824A] bg-transparent border-[#A6824A] text-[#A6824A] focus:ring-[#A6824A]" /><span className="text-sm text-[#E6E2DA] font-medium">Es Teh Tawar</span></label>
+                                          <label className="flex items-center gap-3 cursor-pointer"><input type="radio" name={`drink_choice_${i}`} value="air_mineral" required className="w-4 h-4 accent-[#A6824A] bg-transparent border-[#A6824A] text-[#A6824A] focus:ring-[#A6824A]" /><span className="text-sm text-[#E6E2DA] font-medium">Air Mineral</span></label>
                                         </div>
                                       </div>
 
                                       <div className="pt-2">
-                                        <label className="block text-xs font-medium mb-2 uppercase tracking-wider text-emerald-400">Kendaraan</label>
+                                        <label className="block text-xs font-medium mb-2 uppercase tracking-wider text-[#A6824A]">Kendaraan</label>
                                         <div className="grid grid-cols-2 gap-4">
                                           <label>
                                             <input type="radio" name={`vehicle_${i}`} value="Mobil" required className="sr-only peer" />
-                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-emerald-800 bg-white/5 rounded-xl cursor-pointer text-emerald-400/70 peer-checked:border-emerald-500 peer-checked:text-emerald-200 peer-checked:bg-emerald-900 hover:bg-white/10 transition-all">
+                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl cursor-pointer text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all">
                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5"></path></svg>
                                               <span className="text-xs font-bold tracking-wide">MOBIL</span>
                                             </div>
                                           </label>
                                           <label>
                                             <input type="radio" name={`vehicle_${i}`} value="Motor" required className="sr-only peer" />
-                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-emerald-800 bg-white/5 rounded-xl cursor-pointer text-emerald-400/70 peer-checked:border-emerald-500 peer-checked:text-emerald-200 peer-checked:bg-emerald-900 hover:bg-white/10 transition-all">
+                                            <div className="flex flex-col items-center justify-center p-3 border-2 border-[#A6824A] bg-[#E6E2DA]/5 rounded-xl cursor-pointer text-[#A6824A]/70 peer-checked:border-[#A6824A] peer-checked:text-[#E6E2DA] peer-checked:bg-[#101111] hover:bg-[#E6E2DA]/10 transition-all">
                                               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 16m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M19 16m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M7.5 14h5l4 -4h-10.5m1.5 4l4 -4"></path><path d="M13 6h2l1.5 3l2 4"></path></svg>
                                               <span className="text-xs font-bold tracking-wide">MOTOR</span>
                                             </div>
@@ -606,7 +606,7 @@ export default function HalalBihalalPage() {
                                 })}
                               </div>
 
-                              <button disabled={isSubmitting} type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                              <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-lg shadow-[#A6824A]/20 disabled:opacity-50 disabled:cursor-not-allowed">
                                 {isSubmitting ? 'Memproses...' : 'Dapatkan Tiket'}
                               </button>
                             </form>
@@ -619,10 +619,10 @@ export default function HalalBihalalPage() {
                           />
                         ) : (
                           <>
-                            <h2 className="text-3xl font-bold text-emerald-400 mb-6 text-center drop-shadow-md">Tiket Anda</h2>
-                            <div className="bg-white/95 backdrop-blur-md p-6 rounded-xl shadow-2xl w-full text-center border-t-8 border-emerald-600">
-                              <h1 className="text-2xl font-bold text-gray-800 mb-1">Tiket Masuk</h1>
-                              <p className="text-gray-500 text-xs mb-4">Periode {invitation.periode}</p>
+                            <h2 className="text-3xl font-bold text-[#A6824A] mb-6 text-center drop-shadow-md">Tiket Anda</h2>
+                            <div className="bg-[#E6E2DA]/95 backdrop-blur-md p-6 rounded-xl shadow-2xl w-full text-center border-t-8 border-[#5D1E21]">
+                              <h1 className="text-2xl font-bold text-[#101111] mb-1">Tiket Masuk</h1>
+                              <p className="text-[#101111]/70 text-xs mb-4">Periode {invitation.periode}</p>
                               
                               <div className="space-y-6 mt-4">
                                 {(invitation.full_name?.split(', ') || []).map((name, i) => {
@@ -655,19 +655,19 @@ export default function HalalBihalalPage() {
                                   });
 
                                   return (
-                                    <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl p-5 shadow-sm relative text-left">
+                                    <div key={i} className="bg-[#E6E2DA]/20 border border-[#A6824A]/20 rounded-xl p-5 shadow-sm relative text-left">
                                       <div className="text-center mb-4">
-                                        <p className="font-bold text-emerald-800 text-lg mb-1">{name}</p>
-                                        <p className="text-emerald-600 font-bold text-xl mb-4">{seats[i] || seats[0]}</p>
+                                        <p className="font-bold text-[#5D1E21] text-lg mb-1">{name}</p>
+                                        <p className="text-[#A6824A] font-bold text-xl mb-4">{seats[i] || seats[0]}</p>
                                         
                                         <div className="relative inline-block">
-                                          <div className="p-3 bg-white border border-gray-100 rounded-xl shadow-inner">
+                                          <div className="p-3 bg-[#E6E2DA] border border-[#A6824A]/10 rounded-xl shadow-inner">
                                             <QRCodeCanvas id={canvasId} value={qrPayload} size={140} level="H" />
                                           </div>
                                           <button 
                                             onClick={() => downloadQR(canvasId, name)}
                                             type="button"
-                                            className="absolute -bottom-3 -right-3 bg-yellow-500 text-slate-900 p-2.5 rounded-full shadow-lg hover:bg-yellow-400 hover:scale-110 active:scale-95 transition-all"
+                                            className="absolute -bottom-3 -right-3 bg-[#A6824A] text-[#101111] p-2.5 rounded-full shadow-lg hover:bg-[#5D1E21] hover:scale-110 active:scale-95 transition-all"
                                             title="Download QR Code"
                                           >
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -677,18 +677,18 @@ export default function HalalBihalalPage() {
                                         </div>
                                       </div>
 
-                                      <div className="grid grid-cols-1 gap-1.5 text-[11px] text-gray-700 bg-white p-3 rounded-lg border border-gray-100">
+                                      <div className="grid grid-cols-1 gap-1.5 text-[11px] text-[#101111] bg-[#E6E2DA] p-3 rounded-lg border border-[#A6824A]/10">
                                         <p>🍽️ {foods[i] || '-'}</p>
                                         <p>🥤 {drinks[i] || '-'}{i === 0 && legacyDrink}</p>
                                         <p>🚗 {cleanVehicle}</p>
-                                        <p className="text-emerald-700">🅿️ Parkir: <span className="font-semibold">{parkingLoc}</span></p>
-                                        <div className="mt-2 pt-2 border-t border-gray-200 flex items-center justify-between">
-                                          <p className="text-emerald-800">👤 Asisten: <span className="font-semibold">{asisten.nama}</span></p>
+                                        <p className="text-[#5D1E21]">🅿️ Parkir: <span className="font-semibold">{parkingLoc}</span></p>
+                                        <div className="mt-2 pt-2 border-t border-[#A6824A]/20 flex items-center justify-between">
+                                          <p className="text-[#5D1E21]">👤 Asisten: <span className="font-semibold">{asisten.nama}</span></p>
                                           <a 
                                             href={`https://wa.me/${asisten.wa.replace('+', '')}`} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="bg-green-500 text-white px-2 py-1 rounded text-[9px] hover:bg-green-600 transition-colors"
+                                            className="bg-[#A6824A] text-[#E6E2DA] px-2 py-1 rounded text-[9px] hover:bg-[#5D1E21] transition-colors"
                                           >Hubungi WA</a>
                                         </div>
                                       </div>
@@ -697,8 +697,8 @@ export default function HalalBihalalPage() {
                                 })}
                               </div>
 
-                              <div className="pt-4 mt-6 border-t border-gray-200">
-                                  <p className="text-center font-bold text-xs text-emerald-700">Status: {invitation.is_present ? '✅ Hadir' : 'Menunggu Kehadiran'}</p>
+                              <div className="pt-4 mt-6 border-t border-[#A6824A]/20">
+                                  <p className="text-center font-bold text-xs text-[#5D1E21]">Status: {invitation.is_present ? '✅ Hadir' : 'Menunggu Kehadiran'}</p>
                                 </div>
                             </div>
                           </>
@@ -712,16 +712,16 @@ export default function HalalBihalalPage() {
               )}
             </AnimatePresence>
 
-          <div className="scroll-indicator fixed bottom-0 left-0 w-full h-24 bg-gradient-to-t from-slate-900/80 to-transparent z-[100] flex flex-col items-center justify-end pb-4 pointer-events-none">
+          <div className="scroll-indicator fixed bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#101111]/80 to-transparent z-[100] flex flex-col items-center justify-end pb-4 pointer-events-none">
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
               className="flex flex-col items-center gap-1"
             >
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/90 font-medium text-center drop-shadow-md">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#E6E2DA]/90 font-medium text-center drop-shadow-md">
                 Scroll/Swipe
               </span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white/90 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[#E6E2DA]/90 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19V5M5 12l7-7 7 7" />
               </svg>
             </motion.div>
