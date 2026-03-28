@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
-import { Html5QrcodeScanner, Html5QrcodeScanType } from "html5-qrcode";
+import { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QRPayload {
@@ -29,15 +29,16 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 10,
-        qrbox: { width: 400, height: 400 }, // ✨ Perbesar area scan
-        aspectRatio: 1.0,
+        fps: 30, // ✨ Ditingkatkan ke 30 frame per detik agar 3x lebih responsif
+        // ✨ Hapus qrbox dan aspectRatio agar area scan menjadi FULL Layar (tanpa bingkai pembatas kotak)
         // Fokus hanya kamera, hapus opsi "Upload Gambar" agar UI rapi
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-        // ✨ KUNCI UTAMA: Minta resolusi kamera setinggi mungkin (Full HD)
+        // ✨ RAHASIA NGEBUT: Fokus 100% pencarian ke QR Code saja (abaikan barcode minimarket dll)
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        // ✨ RAHASIA RESOLUSI: Minta resolusi ideal tanpa batasan max agar iPad memakai lensa paling tajamnya
         videoConstraints: {
-          width: { ideal: 1920, max: 1920 },
-          height: { ideal: 1080, max: 1080 },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
           // Pastikan selalu pakai kamera belakang
           facingMode: "environment"
         }
@@ -98,19 +99,12 @@ export default function Kehadiran() {
   }, []);
 
   return (
-    <div className="relative w-full bg-[#101111] rounded-2xl border border-gray-800 shadow-2xl overflow-hidden min-h-[500px] md:min-h-[600px] flex items-center justify-center col-span-1 md:col-span-2 lg:col-span-3">
+    <div className="relative w-full h-[75vh] md:h-[80vh] bg-black rounded-xl overflow-hidden col-span-1 md:col-span-2 lg:col-span-3 flex flex-col shadow-2xl">
       
       {/* LAYER 1: KAMERA STANDBY (Background) */}
-      <div className="w-full h-full flex flex-col items-center justify-center p-4 z-10">
-        <div className="mb-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#A6824A] mb-2 tracking-wide">Kamera Presensi</h2>
-          <p className="text-[#E6E2DA]/60 text-sm">Gunakan layar iPad ini untuk memindai Tiket QR Tamu.</p>
-        </div>
-
-        {/* Wadah Render html5-qrcode */}
-        <div className="bg-white p-3 rounded-2xl w-full max-w-md shadow-[0_0_30px_rgba(166,130,74,0.15)] ring-4 ring-[#A6824A]/20">
-           <div id="qr-reader" className="w-full rounded-xl overflow-hidden bg-white"></div>
-        </div>
+      <div className="absolute inset-0 z-10 flex flex-col">
+         {/* Wadah kamera yang menyapu bersih seluruh area (Full View Edge-to-Edge) */}
+         <div id="qr-reader" className="w-full h-full"></div>
       </div>
 
       {/* LAYER 2: OVERLAY SAMBUTAN (Animasi Pop-up) */}
@@ -171,7 +165,15 @@ export default function Kehadiran() {
 
       {/* CSS KHUSUS UNTUK MEMPERCANTIK UI BAWAAN HTML5-QRCODE */}
       <style dangerouslySetInnerHTML={{__html: `
-        #qr-reader { border: none !important; }
+        #qr-reader { border: none !important; width: 100% !important; height: 100% !important; display: flex; flex-direction: column; background: #000; }
+        
+        /* Header Panel Bawaan Scanner (Melayang di atas video) */
+        #qr-reader__dashboard_section { padding: 1.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; top: 0; left: 0; right: 0; z-index: 30; }
+        
+        /* Bikin Video Cover Seluruh Layar (Full View Tepi ke Tepi) */
+        #qr-reader__scan_region { flex: 1; width: 100% !important; height: 100% !important; min-height: 100%; position: relative; overflow: hidden; }
+        #qr-reader__scan_region video { object-fit: cover !important; width: 100% !important; height: 100% !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+        
         #qr-reader button {
           background-color: #A6824A !important;
           color: #101111 !important;
@@ -185,14 +187,15 @@ export default function Kehadiran() {
           transition: all 0.2s;
         }
         #qr-reader button:hover { opacity: 0.8; }
-        #qr-reader__dashboard_section_csr span { color: #101111 !important; font-weight: 600; font-size: 14px; }
+        #qr-reader__dashboard_section_csr span { color: #E6E2DA !important; font-weight: 600; font-size: 14px; }
         #qr-reader__camera_selection { 
           margin-bottom: 12px !important; 
           padding: 10px !important; 
           border-radius: 8px !important; 
-          border: 1px solid #d1d5db !important; 
+          border: 1px solid #A6824A !important; 
           width: 100%; 
-          background: #f9fafb;
+          background: #101111;
+          color: #E6E2DA;
         }
         #qr-reader a { display: none !important; } /* Hilangkan link sponsor html5-qrcode */
       `}} />
