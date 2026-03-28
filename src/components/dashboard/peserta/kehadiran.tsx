@@ -20,11 +20,14 @@ interface QRPayload {
 export default function Kehadiran() {
   const [overlayState, setOverlayState] = useState<"none" | "welcome" | "seat">("none");
   const [scannedData, setScannedData] = useState<QRPayload | null>(null);
+  const [isScannerFullScreen, setIsScannerFullScreen] = useState(false);
   
   // Menggunakan ref agar state ini tidak menyebabkan komponen re-render saat kamera berjalan
   const isProcessing = useRef(false);
 
   useEffect(() => {
+    if (!isScannerFullScreen) return;
+
     // Inisialisasi Engine Scanner
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
@@ -96,16 +99,47 @@ export default function Kehadiran() {
     return () => {
       scanner.clear().catch(e => console.error("Gagal mematikan kamera:", e));
     };
-  }, []);
+  }, [isScannerFullScreen]);
 
   return (
-    <div className="relative w-full h-[75vh] md:h-[80vh] bg-black rounded-xl overflow-hidden col-span-1 md:col-span-2 lg:col-span-3 flex flex-col shadow-2xl">
+    <div className="col-span-1 md:col-span-2 lg:col-span-3 w-full h-full">
       
-      {/* LAYER 1: KAMERA STANDBY (Background) */}
-      <div className="absolute inset-0 z-10 flex flex-col">
-         {/* Wadah kamera yang menyapu bersih seluruh area (Full View Edge-to-Edge) */}
-         <div id="qr-reader" className="w-full h-full"></div>
-      </div>
+      {/* KONDISI 1: CARD STANDBY DI DASHBOARD */}
+      {!isScannerFullScreen ? (
+        <div className="p-8 md:p-12 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] text-center">
+          <div className="w-20 h-20 bg-[#A6824A]/10 rounded-full flex items-center justify-center mb-6 text-[#A6824A] ring-8 ring-[#A6824A]/5">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Scanner Presensi</h2>
+          <p className="text-gray-500 mb-10 max-w-md">Tekan tombol di bawah untuk membuka kamera dalam mode layar penuh (Full Screen) dan mulai memindai tiket tamu.</p>
+          <button 
+            onClick={() => setIsScannerFullScreen(true)}
+            className="px-8 py-4 bg-[#A6824A] hover:bg-[#8a6a3b] text-white rounded-xl font-bold uppercase tracking-wider shadow-[0_10px_25px_rgba(166,130,74,0.4)] transition-all active:scale-95 hover:-translate-y-1 flex items-center gap-3"
+          >
+            Buka Scanner Full Screen
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+          </button>
+        </div>
+      ) : (
+        /* KONDISI 2: FULL SCREEN OVERLAY KAMERA (Seolah Halaman Baru) */
+        <div className="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center w-screen h-[100dvh] overflow-hidden">
+          
+          {/* Tombol Tutup Kamera di Pojok Kanan Atas */}
+          <button 
+            onClick={() => setIsScannerFullScreen(false)} 
+            className="absolute top-6 right-6 md:top-8 md:right-8 z-[1000] p-3 bg-[#101111]/60 text-white rounded-full hover:bg-red-600 backdrop-blur-md transition-all border border-white/10 shadow-xl"
+            title="Tutup Kamera"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+
+          {/* LAYER 1: KAMERA STANDBY (Background Full Edge-to-Edge) */}
+          <div className="absolute inset-0 z-10 flex flex-col">
+             <div id="qr-reader" className="w-full h-full"></div>
+          </div>
 
       {/* LAYER 2: OVERLAY SAMBUTAN (Animasi Pop-up) */}
       <AnimatePresence>
@@ -165,14 +199,14 @@ export default function Kehadiran() {
 
       {/* CSS KHUSUS UNTUK MEMPERCANTIK UI BAWAAN HTML5-QRCODE */}
       <style dangerouslySetInnerHTML={{__html: `
-        #qr-reader { border: none !important; width: 100% !important; height: 100% !important; display: flex; flex-direction: column; background: #000; }
+        #qr-reader { border: none !important; width: 100vw !important; height: 100dvh !important; display: flex; flex-direction: column; background: #000; }
         
-        /* Header Panel Bawaan Scanner (Melayang di atas video) */
-        #qr-reader__dashboard_section { padding: 1.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; top: 0; left: 0; right: 0; z-index: 30; }
+        /* Control Panel di Pindah ke Bawah (Bottom) agar tidak menghalangi kamera */
+        #qr-reader__dashboard_section { padding: 1.5rem; padding-bottom: 2.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; bottom: 0; left: 0; right: 0; z-index: 30; border-top: 1px solid rgba(166, 130, 74, 0.3); display: flex; flex-direction: column; align-items: center; }
         
         /* Bikin Video Cover Seluruh Layar (Full View Tepi ke Tepi) */
-        #qr-reader__scan_region { flex: 1; width: 100% !important; height: 100% !important; min-height: 100%; position: relative; overflow: hidden; }
-        #qr-reader__scan_region video { object-fit: cover !important; width: 100% !important; height: 100% !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+        #qr-reader__scan_region { flex: 1; width: 100vw !important; height: 100dvh !important; min-height: 100%; position: fixed; top: 0; left: 0; z-index: 10; overflow: hidden; }
+        #qr-reader__scan_region video { object-fit: cover !important; width: 100vw !important; height: 100dvh !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
         
         #qr-reader button {
           background-color: #A6824A !important;
@@ -199,6 +233,8 @@ export default function Kehadiran() {
         }
         #qr-reader a { display: none !important; } /* Hilangkan link sponsor html5-qrcode */
       `}} />
+        </div>
+      )}
     </div>
   );
 }
