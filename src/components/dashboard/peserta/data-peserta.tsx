@@ -138,7 +138,7 @@ export default function DataPeserta() {
   return (
     <div className="col-span-1 md:col-span-2 lg:col-span-3 p-6 bg-[#FFFFFF] rounded-xl border border-gray-200 shadow-sm h-full flex flex-col">
       {/* Header & Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
         <div>
           <h3 className="text-xl font-bold text-[#101111]">Master Data RSVP</h3>
           <p className="text-sm text-[#6B7280] mt-1">Daftar seluruh tamu yang telah mengonfirmasi kehadiran.</p>
@@ -147,96 +147,191 @@ export default function DataPeserta() {
           <input
             type="text"
             placeholder="Cari nama atau email..."
-            className="w-full sm:w-72 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] transition-all text-[#101111]"
+            className="w-full sm:w-64 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] transition-all text-[#101111]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Area Tabel (Bisa scroll horizontal) */}
-      <div className="flex-1 overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-left border-collapse min-w-[1600px]">
+      {/* Area Desktop: Tabel Compact (Fit 1 Layar) */}
+      <div className="hidden lg:block flex-1 overflow-x-auto rounded-lg border border-gray-200">
+        <table className="w-full text-left border-collapse text-xs">
           <thead className="bg-[#F3F4F6] text-[#101111] sticky top-0 z-10">
             <tr>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">No</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Nama Lengkap</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Periode</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Email</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200 text-center">Kursi</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Makanan</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Minuman</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Kendaraan & Parkir</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200">Asisten</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200 text-center">Status Check-In</th>
-              <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider border-b border-gray-200 text-center">Aksi</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200">No</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200">Peserta</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200 text-center">Kursi</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200">Konsumsi</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200">Logistik</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200">Asisten</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200 text-center">Status</th>
+              <th className="py-2 px-3 font-bold uppercase tracking-wider border-b border-gray-200 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 text-sm text-[#101111]">
             {isLoading ? (
               <tr>
-                <td colSpan={11} className="py-8 text-center text-[#6B7280] animate-pulse font-medium">Memuat data peserta...</td>
+                <td colSpan={8} className="py-8 text-center text-[#6B7280] animate-pulse font-medium">Memuat data peserta...</td>
               </tr>
             ) : filteredData.length === 0 ? (
               <tr>
-                <td colSpan={11} className="py-8 text-center text-[#6B7280]">Tidak ada data peserta ditemukan.</td>
+                <td colSpan={8} className="py-8 text-center text-[#6B7280]">Tidak ada data peserta ditemukan.</td>
               </tr>
             ) : (
               filteredData.map((inv, index) => (
                 <tr key={inv.id} className="hover:bg-gray-50 transition-colors even:bg-gray-50/50">
-                  <td className="py-3 px-4 font-medium text-[#6B7280]">{index + 1}</td>
-                  <td className="py-3 px-4 font-semibold">
-                    {(inv.full_name || '-').split(', ').map((name, idx) => (
-                      <span key={idx} className="block whitespace-nowrap">{name}</span>
-                    ))}
+                  <td className="py-2 px-3 text-[#6B7280] align-top font-medium">{index + 1}</td>
+                  <td className="py-2 px-3 align-top">
+                    <div className="flex flex-col gap-0.5">
+                      {(inv.full_name || '-').split(', ').map((name, idx) => (
+                        <span key={idx} className="font-bold text-[#101111]">{name}</span>
+                      ))}
+                      <span className="text-[10px] text-[#6B7280] truncate max-w-[150px]" title={inv.email}>{inv.email}</span>
+                      <span className="inline-block w-max mt-0.5 text-[9px] font-medium bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded">{inv.periode || '-'}</span>
+                    </div>
                   </td>
-                  <td className="py-3 px-4">{inv.periode || '-'}</td>
-                  <td className="py-3 px-4 text-[#6B7280]">{inv.email}</td>
-                  <td className="py-3 px-4 text-center">
-                    {(inv.seat_number || 'Belum Pilih').split(', ').map((seat, idx) => (
-                      <span key={idx} className="block font-mono text-xs font-bold text-[#5D1E21] bg-gray-100 border border-gray-200 rounded px-2 py-0.5 my-0.5">
-                        {seat}
-                      </span>
-                    ))}
+                  <td className="py-2 px-3 text-center align-top">
+                    <div className="flex flex-col items-center gap-1">
+                      {(inv.seat_number || 'Belum Pilih').split(', ').map((seat, idx) => (
+                        <span key={idx} className="font-mono text-[10px] font-bold text-[#5D1E21] bg-[#5D1E21]/5 border border-[#5D1E21]/20 rounded px-1.5 py-0.5">
+                          {seat}
+                        </span>
+                      ))}
+                    </div>
                   </td>
-                  <td className="py-3 px-4">
-                    {(inv.food_menu || '-').split(', ').map((food, idx) => (
-                      <span key={idx} className="block whitespace-nowrap">{food}</span>
-                    ))}
+                  <td className="py-2 px-3 align-top">
+                    <div className="flex flex-col gap-1 max-w-[140px] text-[10px]">
+                      {(inv.food_menu || '-').split(', ').map((food, idx) => (
+                        <span key={`f-${idx}`} className="truncate text-gray-700" title={food}>🍽️ {food}</span>
+                      ))}
+                      {(inv.drink_menu || '-').split(', ').map((drink, idx) => (
+                        <span key={`d-${idx}`} className="truncate text-gray-700" title={drink}>🥤 {drink}</span>
+                      ))}
+                    </div>
                   </td>
-                  <td className="py-3 px-4">
-                    {(inv.drink_menu || '-').split(', ').map((drink, idx) => (
-                      <span key={idx} className="block whitespace-nowrap">{drink}</span>
-                    ))}
+                  <td className="py-2 px-3 align-top">
+                    <div className="flex flex-col gap-1 max-w-[130px] text-[10px]">
+                      {(inv.vehicle || '-').split(', ').map((v, idx) => (
+                        <span key={idx} className="truncate text-gray-700" title={v}>🚗 {v.replace('(Parkir: ', '- ').replace(')', '')}</span>
+                      ))}
+                    </div>
                   </td>
-                  <td className="py-3 px-4 text-gray-500">
-                    {(inv.vehicle || '-').split(', ').map((v, idx) => (
-                      <span key={idx} className="block whitespace-nowrap">{v}</span>
-                    ))}
-                  </td>
-                  <td className="py-3 px-4 font-medium text-gray-600 whitespace-nowrap">
+                  <td className="py-2 px-3 font-medium text-gray-600 align-top text-[10px]">
                     {getAsistenByPeriode(inv.periode).nama}
                   </td>
-                  <td className="py-3 px-4 text-center">
+                  <td className="py-2 px-3 text-center align-top">
                     {inv.is_present ? (
-                      <span className="inline-block px-3 py-1 bg-green-100 text-green-800 border border-green-200 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                      <span className="inline-block px-2 py-0.5 bg-green-100 text-green-800 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider shadow-sm">
                         ✅ Hadir
                       </span>
                     ) : (
-                      <span className="inline-block px-3 py-1 bg-[#A6824A]/10 text-[#A6824A] border border-[#A6824A]/30 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                      <span className="inline-block px-2 py-0.5 bg-[#A6824A]/10 text-[#A6824A] border border-[#A6824A]/30 rounded text-[9px] font-bold uppercase tracking-wider shadow-sm">
                         ⏳ Pending
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 text-center whitespace-nowrap">
-                    <button onClick={() => handleEditClick(inv)} className="text-[#A6824A] hover:text-[#8a6a3b] mr-3 font-medium transition-colors">Edit</button>
-                    <button onClick={() => handleDelete(inv.id)} className="text-[#5D1E21] hover:text-[#411517] font-medium transition-colors">Hapus</button>
+                  <td className="py-2 px-3 text-center align-top whitespace-nowrap">
+                    <button onClick={() => handleEditClick(inv)} className="text-[#A6824A] hover:bg-[#A6824A]/10 p-1.5 rounded transition-colors mr-1" title="Edit">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    </button>
+                    <button onClick={() => handleDelete(inv.id)} className="text-[#5D1E21] hover:bg-[#5D1E21]/10 p-1.5 rounded transition-colors" title="Hapus">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Area Mobile: Card View (Hanya muncul di layar HP/Tablet) */}
+      <div className="block lg:hidden flex-1 space-y-4">
+        {isLoading ? (
+          <div className="p-8 text-center text-[#6B7280] animate-pulse font-medium bg-gray-50 rounded-xl border border-gray-200">Memuat data peserta...</div>
+        ) : filteredData.length === 0 ? (
+          <div className="p-8 text-center text-[#6B7280] bg-gray-50 rounded-xl border border-gray-200">Tidak ada data peserta ditemukan.</div>
+        ) : (
+          filteredData.map((inv, index) => (
+            <div key={inv.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col gap-4 relative">
+              {/* Header Card */}
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-xs font-bold text-gray-400">#{index + 1}</span>
+                    <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-medium">{inv.periode || '-'}</span>
+                  </div>
+                  <div className="font-bold text-[#101111] text-sm flex flex-col gap-0.5">
+                    {(inv.full_name || '-').split(', ').map((name, idx) => (
+                      <span key={idx}>{name}</span>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-[#6B7280] mt-1 break-all">{inv.email}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  {inv.is_present ? (
+                    <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 border border-green-200 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                      ✅ Hadir
+                    </span>
+                  ) : (
+                    <span className="inline-block px-2.5 py-1 bg-[#A6824A]/10 text-[#A6824A] border border-[#A6824A]/30 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                      ⏳ Pending
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Detail Grid */}
+              <div className="grid grid-cols-2 gap-3 text-[11px] bg-gray-50 p-3 rounded-lg border border-gray-100">
+                <div>
+                  <span className="block text-gray-500 mb-1">Kursi</span>
+                  <div className="flex flex-wrap gap-1">
+                    {(inv.seat_number || 'Belum Pilih').split(', ').map((seat, idx) => (
+                      <span key={idx} className="font-mono font-bold text-[#5D1E21] bg-white border border-gray-200 rounded px-1.5 py-0.5">
+                        {seat}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="block text-gray-500 mb-1">Asisten</span>
+                  <span className="font-medium text-gray-700">{getAsistenByPeriode(inv.periode).nama}</span>
+                </div>
+                <div>
+                  <span className="block text-gray-500 mb-1">Makanan</span>
+                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
+                    {(inv.food_menu || '-').split(', ').map((food, idx) => <span key={idx}>• {food}</span>)}
+                  </div>
+                </div>
+                <div>
+                  <span className="block text-gray-500 mb-1">Minuman</span>
+                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
+                    {(inv.drink_menu || '-').split(', ').map((drink, idx) => <span key={idx}>• {drink}</span>)}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <span className="block text-gray-500 mb-1">Kendaraan & Parkir</span>
+                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
+                    {(inv.vehicle || '-').split(', ').map((v, idx) => <span key={idx}>• {v}</span>)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-4 pt-1">
+                <button onClick={() => handleEditClick(inv)} className="text-[#A6824A] hover:text-[#8a6a3b] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#A6824A]/10 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                  Edit
+                </button>
+                <button onClick={() => handleDelete(inv.id)} className="text-[#5D1E21] hover:text-[#411517] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#5D1E21]/10 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  Hapus
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal Edit Overlay */}
