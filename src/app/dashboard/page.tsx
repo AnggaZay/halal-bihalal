@@ -10,6 +10,7 @@ import OverviewPeserta from "@/components/dashboard/peserta/overview-peserta";
 import DataPeserta from "@/components/dashboard/peserta/data-peserta";
 import Fasilitas from "@/components/dashboard/peserta/fasilitas";
 import Kehadiran from "@/components/dashboard/peserta/kehadiran";
+import Asisten from "@/components/dashboard/peserta/asisten";
 
 // Import Komponen Sumber Daya
 import OverviewSumberDaya from "@/components/dashboard/sumber-daya/overview-sumber-daya";
@@ -25,7 +26,7 @@ import Sponsorship from "@/components/dashboard/dokumen/sponsorship";
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "peserta" | "sumber-daya" | "dokumen">("overview");
   // State khusus untuk sub-menu Peserta
-  const [activePesertaTab, setActivePesertaTab] = useState<"overview" | "data" | "kehadiran" | "fasilitas">("overview");
+  const [activePesertaTab, setActivePesertaTab] = useState<"overview" | "data" | "kehadiran" | "fasilitas" | "asisten">("overview");
 
   return (
     // Tambahkan padding bottom (pb-24) agar konten paling bawah tidak tertutup oleh bottom navigation
@@ -38,7 +39,7 @@ export default function DashboardPage() {
             </svg>
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Dashboard</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Garda Citra Wicara & Garda Agenda</h1>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">Kelola semua kebutuhan acara Anda.</p>
           </div>
         </div>
@@ -54,61 +55,24 @@ export default function DashboardPage() {
           {activeTab === "peserta" && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
               
-              {/* Sub-menu Navigasi Peserta (Bentuk Pills) */}
-              <div className="bg-gray-100/80 p-1 rounded-lg border border-gray-200/50 flex flex-row gap-1">
+              {/* Tombol Kembali (Muncul saat masuk sub-menu M-Banking) */}
+              {activePesertaTab !== "overview" && (
                 <button
                   onClick={() => setActivePesertaTab("overview")}
-                  className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2 px-1 md:px-4 rounded-md transition-all ${
-                    activePesertaTab === "overview" ? "bg-white text-[#A6824A] shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-                  }`}
+                  className="flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-[#A6824A] transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-max mb-4"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  <span className="text-[10px] md:text-sm font-medium">Rekap</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                  Kembali ke Menu Utama
                 </button>
-                <button
-                  onClick={() => setActivePesertaTab("data")}
-                  className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2 px-1 md:px-4 rounded-md transition-all ${
-                    activePesertaTab === "data" ? "bg-white text-[#A6824A] shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-                  }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <span className="text-[10px] md:text-sm font-medium">Data</span>
-                </button>
-                <button
-                  onClick={() => setActivePesertaTab("kehadiran")}
-                  className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2 px-1 md:px-4 rounded-md transition-all ${
-                    activePesertaTab === "kehadiran" ? "bg-white text-[#A6824A] shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-                  }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span className="text-[10px] md:text-sm font-medium">Scan</span>
-                </button>
-                <button
-                  onClick={() => setActivePesertaTab("fasilitas")}
-                  className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 py-2 px-1 md:px-4 rounded-md transition-all ${
-                    activePesertaTab === "fasilitas" ? "bg-white text-[#A6824A] shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-                  }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                  </svg>
-                  <span className="text-[10px] md:text-sm font-medium">Fasilitas</span>
-                </button>
-              </div>
+              )}
 
               {/* Konten Sub-menu yang Aktif */}
-              <div className="mt-4 animate-in fade-in zoom-in-95 duration-200">
-                {activePesertaTab === "overview" && <OverviewPeserta />}
+              <div className="animate-in fade-in zoom-in-95 duration-200">
+                {activePesertaTab === "overview" && <OverviewPeserta onNavigate={setActivePesertaTab} />}
                 {activePesertaTab === "data" && <DataPeserta />}
                 {activePesertaTab === "kehadiran" && <Kehadiran />}
                 {activePesertaTab === "fasilitas" && <Fasilitas />}
+                {activePesertaTab === "asisten" && <Asisten />}
               </div>
             </div>
           )}
@@ -154,7 +118,10 @@ export default function DashboardPage() {
 
           {/* Tab: Peserta */}
           <button
-            onClick={() => setActiveTab("peserta")}
+            onClick={() => {
+              setActiveTab("peserta");
+              setActivePesertaTab("overview");
+            }}
             className={`flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors rounded-lg mx-1 ${
               activeTab === "peserta" ? "text-blue-600" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50"
             }`}
