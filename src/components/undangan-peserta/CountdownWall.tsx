@@ -23,11 +23,15 @@ export default function CountdownWall({ data }: { data: typeof HalalBihalalData 
 
 
   useEffect(() => {
-    const target = new Date(data.events.mainEvent.date).getTime();
+    // Target: 5 April 2026, Jam 18:30 WIB (+07:00)
+    const target = new Date("2026-04-05T18:30:00+07:00").getTime();
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const diff = target - now;
-      if (diff < 0) return clearInterval(interval);
+      if (diff < 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return clearInterval(interval);
+      }
       setTimeLeft({
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
         hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
@@ -36,7 +40,8 @@ export default function CountdownWall({ data }: { data: typeof HalalBihalalData 
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [data.events.mainEvent.date]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="relative flex flex-col items-center gap-4 w-full -translate-y-8 md:-translate-y-24">

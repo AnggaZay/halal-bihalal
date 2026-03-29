@@ -20,6 +20,8 @@ export interface PendingData {
   food_menu?: string;
   drink_menu?: string;
   vehicle?: string;
+  jenis_parkiran?: string;
+  nama_asisten?: string;
   isNew?: boolean;
 }
 

@@ -14,6 +14,26 @@ interface Invitation {
   food_menu: string;
   drink_menu: string;
   vehicle: string;
+  jenis_parkiran?: string;
+  nama_asisten?: string;
+}
+
+interface FlattenedInvitation {
+  parentId: string;
+  subId: string;
+  index: number;
+  email: string;
+  name: string;
+  periode: string;
+  seat: string;
+  food: string;
+  drink: string;
+  vehicle: string;
+  parking: string;
+  asisten: string;
+  is_present: boolean;
+  groupSize: number;
+  parentInv: Invitation;
 }
 
 export default function DataPeserta() {
@@ -22,8 +42,8 @@ export default function DataPeserta() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // State untuk modal edit
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Partial<Invitation>>({});
+  const [editingItem, setEditingItem] = useState<FlattenedInvitation | null>(null);
+  const [editForm, setEditForm] = useState<Partial<FlattenedInvitation>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -74,13 +94,6 @@ export default function DataPeserta() {
     };
   }, []);
 
-  // Filter data berdasarkan input pencarian
-  const filteredData = invitations.filter(
-    (inv) =>
-      inv.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inv.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   // Fungsi bantuan untuk menentukan asisten berdasarkan periode
   const getAsistenByPeriode = (periodeStr: string | undefined) => {
     if (!periodeStr) return { nama: "M. Fikri Al-Khasani" };
@@ -96,42 +109,126 @@ export default function DataPeserta() {
     }
   };
 
-  // Handler untuk Hapus Data
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Yakin ingin menghapus data peserta ini?")) return;
-    
-    // Optimistic UI: Langsung hapus dari layar detik itu juga
-    setInvitations((prev) => prev.filter((inv) => inv.id !== id));
+  // Flatten (Pretelin) Data Gabungan Menjadi Data Per-Individu
+  const flattenedData = invitations.flatMap((inv) => {
+    const names = inv.full_name ? inv.full_name.split(",").map(n => n.trim()) : ["Tanpa Nama"];
+    const seats = inv.seat_number ? inv.seat_number.split(",").map(s => s.trim()) : [];
+    const foods = inv.food_menu ? inv.food_menu.split(",").map(f => f.trim()) : [];
+    const drinks = inv.drink_menu ? inv.drink_menu.split(",").map(d => d.trim()) : [];
+    const vehicles = inv.vehicle ? inv.vehicle.split(",").map(v => v.trim()) : [];
+    const parkings = inv.jenis_parkiran ? inv.jenis_parkiran.split(",").map(p => p.trim()) : [];
+    const asisten = inv.nama_asisten || getAsistenByPeriode(inv.periode).nama;
 
-    const { error } = await supabase.from("invitations").delete().eq("id", id);
-    if (error) {
-      alert("Gagal menghapus data: " + error.message);
+    return names.map((name, idx): FlattenedInvitation => ({
+      parentId: inv.id,
+      subId: `${inv.id}-${idx}`, // Unique ID untuk list React
+      index: idx, // Penanda urutan dia di dalam koma
+      email: inv.email,
+      name: name,
+      periode: inv.periode || '-',
+      seat: seats[idx] || seats[0] || 'Belum Pilih',
+      food: foods[idx] || foods[0] || '-',
+      drink: drinks[idx] || drinks[0] || '-',
+      vehicle: vehicles[idx] || vehicles[0] || '-',
+      parking: parkings[idx] || parkings[0] || '-',
+      asisten: asisten,
+      is_present: inv.is_present,
+      groupSize: names.length, // Penanda kalau dia booking berkelompok
+      parentInv: inv, // Simpan reference asli untuk fungsi Edit
+    }));
+  });
+
+  // Filter data individu berdasarkan input pencarian
+  const filteredData = flattenedData.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handler untuk Hapus 1 Orang (Individu)
+  const handleDeleteSingle = async (item: FlattenedInvitation) => {
+    const confirmMsg = item.groupSize > 1 
+      ? `Yakin ingin menghapus peserta "${item.name}" dari grup reservasi ini?\n(Anggota grup lainnya tidak akan terhapus)`
+      : `Yakin ingin menghapus data peserta "${item.name}"?`;
+      
+    if (!window.confirm(confirmMsg)) return;
+    
+    if (item.groupSize === 1) {
+      // Jika sendirian, langsung hapus barisnya dari DB
+      setInvitations((prev) => prev.filter((inv) => inv.id !== item.parentId));
+      const { error } = await supabase.from("invitations").delete().eq("id", item.parentId);
+      if (error) alert("Gagal menghapus data: " + error.message);
+    } else {
+      // Jika grup, cabut data dia saja dari array string koma-komaannya
+      const removeAt = (str: string | undefined | null, idx: number) => {
+        if (!str) return null;
+        const arr = str.split(',').map(s => s.trim());
+        if (idx < arr.length) arr.splice(idx, 1);
+        return arr.join(', ');
+      };
+
+      const inv = item.parentInv;
+      const updatedInv = {
+        full_name: removeAt(inv.full_name, item.index),
+        seat_number: removeAt(inv.seat_number, item.index),
+        food_menu: removeAt(inv.food_menu, item.index),
+        drink_menu: removeAt(inv.drink_menu, item.index),
+        vehicle: removeAt(inv.vehicle, item.index),
+        jenis_parkiran: removeAt(inv.jenis_parkiran, item.index),
+      };
+
+      // Optimistic Update
+      setInvitations((prev) => prev.map((p) => (p.id === item.parentId ? { ...p, ...updatedInv } as Invitation : p)));
+      const { error } = await supabase.from("invitations").update(updatedInv).eq("id", item.parentId);
+      if (error) alert("Gagal menghapus data individu: " + error.message);
     }
   };
 
-  // Handler untuk Buka Edit Modal
-  const handleEditClick = (inv: Invitation) => {
-    setEditingId(inv.id);
-    setEditForm(inv);
+  // Handler untuk Buka Edit Modal 1 Orang
+  const handleEditClick = (item: FlattenedInvitation) => {
+    setEditingItem(item);
+    setEditForm({ ...item }); // Ambil state form dari flattened item (bukan parentInv)
   };
 
-  // Handler untuk Simpan Perubahan
+  // Handler untuk Simpan Perubahan 1 Orang
   const handleSaveEdit = async () => {
-    if (!editingId) return;
+    if (!editingItem) return;
     setIsSubmitting(true);
     
-    // Optimistic UI: Langsung ubah di layar detik itu juga
+    const inv = editingItem.parentInv;
+    const groupSize = inv.full_name ? inv.full_name.split(',').length : 1;
+
+    // Fungsi helper untuk replace 1 item dalam array string koma
+    const updateAt = (str: string | undefined | null, idx: number, newValue: string | undefined) => {
+      const arr = str ? str.split(',').map(s => s.trim()) : Array(groupSize).fill('-');
+      while (arr.length <= idx) arr.push('-');
+      arr[idx] = newValue || '-';
+      return arr.join(', ');
+    };
+
+    const updatedInv = {
+      email: editForm.email, // Email & Periode & Kehadiran shared per baris form
+      periode: editForm.periode,
+      is_present: editForm.is_present,
+      full_name: updateAt(inv.full_name, editingItem.index, editForm.name),
+      seat_number: updateAt(inv.seat_number, editingItem.index, editForm.seat),
+      food_menu: updateAt(inv.food_menu, editingItem.index, editForm.food),
+      drink_menu: updateAt(inv.drink_menu, editingItem.index, editForm.drink),
+      vehicle: updateAt(inv.vehicle, editingItem.index, editForm.vehicle),
+      jenis_parkiran: updateAt(inv.jenis_parkiran, editingItem.index, editForm.parking),
+    };
+
     setInvitations((prev) =>
-      prev.map((inv) => (inv.id === editingId ? { ...inv, ...editForm } as Invitation : inv))
+      prev.map((p) => (p.id === editingItem.parentId ? { ...p, ...updatedInv } as Invitation : p))
     );
 
-    const { error } = await supabase.from("invitations").update(editForm).eq("id", editingId);
+    const { error } = await supabase.from("invitations").update(updatedInv).eq("id", editingItem.parentId);
     
     setIsSubmitting(false);
     if (error) {
       alert("Gagal menyimpan perubahan: " + error.message);
     } else {
-      setEditingId(null);
+      setEditingItem(null);
     }
   };
 
@@ -179,49 +276,43 @@ export default function DataPeserta() {
                 <td colSpan={8} className="py-8 text-center text-[#6B7280]">Tidak ada data peserta ditemukan.</td>
               </tr>
             ) : (
-              filteredData.map((inv, index) => (
-                <tr key={inv.id} className="hover:bg-gray-50 transition-colors even:bg-gray-50/50">
+              filteredData.map((item, index) => (
+                <tr key={item.subId} className="hover:bg-gray-50 transition-colors even:bg-gray-50/50">
                   <td className="py-2 px-3 text-[#6B7280] align-top font-medium">{index + 1}</td>
                   <td className="py-2 px-3 align-top">
                     <div className="flex flex-col gap-0.5">
-                      {(inv.full_name || '-').split(', ').map((name, idx) => (
-                        <span key={idx} className="font-bold text-[#101111]">{name}</span>
-                      ))}
-                      <span className="text-[10px] text-[#6B7280] truncate max-w-[150px]" title={inv.email}>{inv.email}</span>
-                      <span className="inline-block w-max mt-0.5 text-[9px] font-medium bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded">{inv.periode || '-'}</span>
+                      <span className="font-bold text-[#101111] flex items-center gap-1.5">
+                        {item.name}
+                        {item.groupSize > 1 && (
+                          <span className="bg-blue-50 text-blue-600 border border-blue-200 text-[8px] px-1 py-0.5 rounded shadow-sm" title={`Bagian dari reservasi ${item.groupSize} orang`}>Grup</span>
+                        )}
+                      </span>
+                      <span className="text-[10px] text-[#6B7280] truncate max-w-[150px]" title={item.email}>{item.email}</span>
+                      <span className="inline-block w-max mt-0.5 text-[9px] font-medium bg-gray-100 text-gray-600 border border-gray-200 px-1.5 py-0.5 rounded">{item.periode}</span>
                     </div>
                   </td>
                   <td className="py-2 px-3 text-center align-top">
-                    <div className="flex flex-col items-center gap-1">
-                      {(inv.seat_number || 'Belum Pilih').split(', ').map((seat, idx) => (
-                        <span key={idx} className="font-mono text-[10px] font-bold text-[#5D1E21] bg-[#5D1E21]/5 border border-[#5D1E21]/20 rounded px-1.5 py-0.5">
-                          {seat}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="font-mono text-[10px] font-bold text-[#5D1E21] bg-[#5D1E21]/5 border border-[#5D1E21]/20 rounded px-1.5 py-0.5">
+                      {item.seat}
+                    </span>
                   </td>
                   <td className="py-2 px-3 align-top">
                     <div className="flex flex-col gap-1 max-w-[140px] text-[10px]">
-                      {(inv.food_menu || '-').split(', ').map((food, idx) => (
-                        <span key={`f-${idx}`} className="truncate text-gray-700" title={food}>🍽️ {food}</span>
-                      ))}
-                      {(inv.drink_menu || '-').split(', ').map((drink, idx) => (
-                        <span key={`d-${idx}`} className="truncate text-gray-700" title={drink}>🥤 {drink}</span>
-                      ))}
+                      <span className="truncate text-gray-700" title={item.food}>🍽️ {item.food}</span>
+                      <span className="truncate text-gray-700" title={item.drink}>🥤 {item.drink}</span>
                     </div>
                   </td>
                   <td className="py-2 px-3 align-top">
                     <div className="flex flex-col gap-1 max-w-[130px] text-[10px]">
-                      {(inv.vehicle || '-').split(', ').map((v, idx) => (
-                        <span key={idx} className="truncate text-gray-700" title={v}>🚗 {v.replace('(Parkir: ', '- ').replace(')', '')}</span>
-                      ))}
+                      <span className="truncate text-gray-700" title={item.vehicle}>🚗 {item.vehicle}</span>
+                      {item.parking !== '-' && <span className="truncate text-gray-700" title={item.parking}>🅿️ {item.parking}</span>}
                     </div>
                   </td>
                   <td className="py-2 px-3 font-medium text-gray-600 align-top text-[10px]">
-                    {getAsistenByPeriode(inv.periode).nama}
+                    {item.asisten}
                   </td>
                   <td className="py-2 px-3 text-center align-top">
-                    {inv.is_present ? (
+                    {item.is_present ? (
                       <span className="inline-block px-2 py-0.5 bg-green-100 text-green-800 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider shadow-sm">
                         ✅ Hadir
                       </span>
@@ -232,10 +323,10 @@ export default function DataPeserta() {
                     )}
                   </td>
                   <td className="py-2 px-3 text-center align-top whitespace-nowrap">
-                    <button onClick={() => handleEditClick(inv)} className="text-[#A6824A] hover:bg-[#A6824A]/10 p-1.5 rounded transition-colors mr-1" title="Edit">
+                    <button onClick={() => handleEditClick(item)} className="text-[#A6824A] hover:bg-[#A6824A]/10 p-1.5 rounded transition-colors mr-1" title="Edit Peserta Ini">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                     </button>
-                    <button onClick={() => handleDelete(inv.id)} className="text-[#5D1E21] hover:bg-[#5D1E21]/10 p-1.5 rounded transition-colors" title="Hapus">
+                    <button onClick={() => handleDeleteSingle(item)} className="text-[#5D1E21] hover:bg-[#5D1E21]/10 p-1.5 rounded transition-colors" title="Hapus Peserta Ini">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                   </td>
@@ -253,24 +344,23 @@ export default function DataPeserta() {
         ) : filteredData.length === 0 ? (
           <div className="p-8 text-center text-[#6B7280] bg-gray-50 rounded-xl border border-gray-200">Tidak ada data peserta ditemukan.</div>
         ) : (
-          filteredData.map((inv, index) => (
-            <div key={inv.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col gap-4 relative">
+          filteredData.map((item, index) => (
+            <div key={item.subId} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col gap-4 relative">
               {/* Header Card */}
               <div className="flex justify-between items-start gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-xs font-bold text-gray-400">#{index + 1}</span>
-                    <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-medium">{inv.periode || '-'}</span>
+                    <span className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded font-medium">{item.periode}</span>
+                    {item.groupSize > 1 && (
+                      <span className="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] px-1.5 py-0.5 rounded shadow-sm">Grup</span>
+                    )}
                   </div>
-                  <div className="font-bold text-[#101111] text-sm flex flex-col gap-0.5">
-                    {(inv.full_name || '-').split(', ').map((name, idx) => (
-                      <span key={idx}>{name}</span>
-                    ))}
-                  </div>
-                  <p className="text-[11px] text-[#6B7280] mt-1 break-all">{inv.email}</p>
+                  <div className="font-bold text-[#101111] text-sm mb-0.5">{item.name}</div>
+                  <p className="text-[11px] text-[#6B7280] break-all">{item.email}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  {inv.is_present ? (
+                  {item.is_present ? (
                     <span className="inline-block px-2.5 py-1 bg-green-100 text-green-800 border border-green-200 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
                       ✅ Hadir
                     </span>
@@ -286,45 +376,35 @@ export default function DataPeserta() {
               <div className="grid grid-cols-2 gap-3 text-[11px] bg-gray-50 p-3 rounded-lg border border-gray-100">
                 <div>
                   <span className="block text-gray-500 mb-1">Kursi</span>
-                  <div className="flex flex-wrap gap-1">
-                    {(inv.seat_number || 'Belum Pilih').split(', ').map((seat, idx) => (
-                      <span key={idx} className="font-mono font-bold text-[#5D1E21] bg-white border border-gray-200 rounded px-1.5 py-0.5">
-                        {seat}
-                      </span>
-                    ))}
-                  </div>
+                  <span className="font-mono font-bold text-[#5D1E21] bg-white border border-gray-200 rounded px-1.5 py-0.5">
+                    {item.seat}
+                  </span>
                 </div>
                 <div>
                   <span className="block text-gray-500 mb-1">Asisten</span>
-                  <span className="font-medium text-gray-700">{getAsistenByPeriode(inv.periode).nama}</span>
+                  <span className="font-medium text-gray-700">{item.asisten}</span>
                 </div>
                 <div>
                   <span className="block text-gray-500 mb-1">Makanan</span>
-                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
-                    {(inv.food_menu || '-').split(', ').map((food, idx) => <span key={idx}>• {food}</span>)}
-                  </div>
+                  <span className="text-gray-700 font-medium">• {item.food}</span>
                 </div>
                 <div>
                   <span className="block text-gray-500 mb-1">Minuman</span>
-                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
-                    {(inv.drink_menu || '-').split(', ').map((drink, idx) => <span key={idx}>• {drink}</span>)}
-                  </div>
+                  <span className="text-gray-700 font-medium">• {item.drink}</span>
                 </div>
                 <div className="col-span-2">
                   <span className="block text-gray-500 mb-1">Kendaraan & Parkir</span>
-                  <div className="flex flex-col gap-0.5 text-gray-700 font-medium">
-                    {(inv.vehicle || '-').split(', ').map((v, idx) => <span key={idx}>• {v}</span>)}
-                  </div>
+                  <span className="text-gray-700 font-medium">• {item.vehicle} {item.parking !== '-' ? `(Parkir: ${item.parking})` : ''}</span>
                 </div>
               </div>
 
               {/* Actions */}
               <div className="flex justify-end gap-4 pt-1">
-                <button onClick={() => handleEditClick(inv)} className="text-[#A6824A] hover:text-[#8a6a3b] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#A6824A]/10 transition-colors">
+                <button onClick={() => handleEditClick(item)} className="text-[#A6824A] hover:text-[#8a6a3b] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#A6824A]/10 transition-colors" title="Edit Peserta Ini">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                   Edit
                 </button>
-                <button onClick={() => handleDelete(inv.id)} className="text-[#5D1E21] hover:text-[#411517] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#5D1E21]/10 transition-colors">
+                <button onClick={() => handleDeleteSingle(item)} className="text-[#5D1E21] hover:text-[#411517] font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5 py-1 px-2 rounded hover:bg-[#5D1E21]/10 transition-colors" title="Hapus Peserta Ini">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   Hapus
                 </button>
@@ -335,14 +415,21 @@ export default function DataPeserta() {
       </div>
 
       {/* Modal Edit Overlay */}
-      {editingId && (
+      {editingItem && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] p-4 backdrop-blur-sm transition-all">
           <div className="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
-            <h3 className="text-xl font-bold mb-4 text-[#101111]">Edit Data Peserta</h3>
+            <div className="mb-4">
+              <h3 className="text-xl font-bold text-[#101111]">Edit Data Peserta</h3>
+              {editingItem.groupSize > 1 && (
+                <p className="text-[10px] bg-blue-50 text-blue-700 p-2 rounded mt-2 border border-blue-100">
+                  ℹ️ Peserta ini adalah bagian dari grup ({editingItem.groupSize} orang). Perubahan <b>Email</b>, <b>Periode</b>, dan <b>Kehadiran</b> akan berlaku untuk seluruh anggota grup form ini.
+                </p>
+              )}
+            </div>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                <input type="text" value={editForm.full_name || ''} onChange={(e) => setEditForm({...editForm, full_name: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                <input type="text" value={editForm.name || ''} onChange={(e) => setEditForm({...editForm, name: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -354,23 +441,29 @@ export default function DataPeserta() {
                   <input type="text" value={editForm.periode || ''} onChange={(e) => setEditForm({...editForm, periode: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kursi</label>
-                  <input type="text" value={editForm.seat_number || ''} onChange={(e) => setEditForm({...editForm, seat_number: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Kursi</label>
+                  <input type="text" value={editForm.seat || ''} onChange={(e) => setEditForm({...editForm, seat: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Makanan</label>
-                  <input type="text" value={editForm.food_menu || ''} onChange={(e) => setEditForm({...editForm, food_menu: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                  <input type="text" value={editForm.food || ''} onChange={(e) => setEditForm({...editForm, food: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Minuman</label>
-                  <input type="text" value={editForm.drink_menu || ''} onChange={(e) => setEditForm({...editForm, drink_menu: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                  <input type="text" value={editForm.drink || ''} onChange={(e) => setEditForm({...editForm, drink: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Kendaraan</label>
-                <input type="text" value={editForm.vehicle || ''} onChange={(e) => setEditForm({...editForm, vehicle: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kendaraan</label>
+                  <input type="text" value={editForm.vehicle || ''} onChange={(e) => setEditForm({...editForm, vehicle: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Parkiran</label>
+                  <input type="text" value={editForm.parking || ''} onChange={(e) => setEditForm({...editForm, parking: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                </div>
               </div>
               <div className="flex items-center pt-2">
                 <input type="checkbox" id="isPresent" checked={editForm.is_present || false} onChange={(e) => setEditForm({...editForm, is_present: e.target.checked})} className="mr-2 h-4 w-4 text-[#A6824A] rounded border-gray-300 focus:ring-[#A6824A]" />
@@ -378,7 +471,7 @@ export default function DataPeserta() {
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-8">
-              <button onClick={() => setEditingId(null)} disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <button onClick={() => setEditingItem(null)} disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                 Batal
               </button>
               <button onClick={handleSaveEdit} disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-white bg-[#A6824A] hover:bg-[#8a6a3b] rounded-lg disabled:opacity-50 transition-colors flex items-center">

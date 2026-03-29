@@ -6,17 +6,17 @@ import { useState } from "react";
 import MainOverview from "@/components/dashboard/main-overview";
 
 // Import Komponen Peserta
-import OverviewPeserta from "@/components/dashboard/peserta/overview-peserta";
-import DataPeserta from "@/components/dashboard/peserta/data-peserta";
-import Fasilitas from "@/components/dashboard/peserta/fasilitas";
-import Kehadiran from "@/components/dashboard/peserta/kehadiran";
-import Asisten from "@/components/dashboard/peserta/asisten";
+import OverviewPeserta from "@/components/dashboard/kepesertaan/overview-peserta";
+import DataPeserta from "@/components/dashboard/kepesertaan/data-master/data-peserta";
+import Fasilitas from "@/components/dashboard/kepesertaan/parkiran/parkiran";
+import Kehadiran from "@/components/dashboard/kepesertaan/kehadiran/presensi";
+import Asisten from "@/components/dashboard/kepesertaan/kehadiran/asisten";
 
 // Import Komponen Sumber Daya
 import OverviewSumberDaya from "@/components/dashboard/sumber-daya/overview-sumber-daya";
-import Keuangan from "@/components/dashboard/sumber-daya/keuangan";
-import Konsumsi from "@/components/dashboard/sumber-daya/konsumsi";
-import Perlengkapan from "@/components/dashboard/sumber-daya/perlengkapan";
+import Keuangan from "@/components/dashboard/sumber-daya/keuangan/keuangan";
+import Konsumsi from "@/components/dashboard/sumber-daya/konsumsi/konsumsi";
+import Perlengkapan from "@/components/dashboard/sumber-daya/perlengkapan/perlengkapan";
 
 // Import Komponen Dokumen
 import Lpj from "@/components/dashboard/dokumen/lpj";

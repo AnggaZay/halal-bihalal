@@ -32,6 +32,8 @@ type InvitationState = {
   drink_menu?: string;
   is_sweet_drink?: boolean | null;
   vehicle?: string;
+  jenis_parkiran?: string;
+  nama_asisten?: string;
   seat_number?: string | null;
   is_present?: boolean;
   isNew?: boolean;
@@ -282,6 +284,7 @@ export default function HalalBihalalPage() {
     const foods: string[] = [];
     const drinks: string[] = [];
     const vehicles: string[] = [];
+    const parkings: string[] = [];
 
     for (let i = 1; i <= guestCount; i++) {
       const nama = formData.get(`nama_${i}`) as string;
@@ -302,7 +305,8 @@ export default function HalalBihalalPage() {
           warmindoMotorCount++; // Tambah hitungan agar tamu ke-2 di form yang sama kebagian jika masih sisa
         }
 
-        vehicles.push(`${vehicleType} (Parkir: ${parkingLoc})`);
+        vehicles.push(vehicleType);
+        parkings.push(parkingLoc);
       }
     }
 
@@ -314,6 +318,8 @@ export default function HalalBihalalPage() {
       drink_menu: drinks.join(', '),
       is_sweet_drink: null, // Dinonaktifkan karena keterangan manis/tawar sudah nyatu di drink_menu
       vehicle: vehicles.join(', '),
+      jenis_parkiran: parkings.join(', '),
+      nama_asisten: asistenNama,
       seat_number: null,
       isNew: true, // ✨ Tambahkan flag ini untuk menandakan data belum masuk database
     };
@@ -648,13 +654,12 @@ export default function HalalBihalalPage() {
                                   const foods = invitation.food_menu?.split(', ') || [];
                                   const drinks = invitation.drink_menu?.split(', ') || [];
                                   const vehicles = invitation.vehicle?.split(', ') || [];
+                                  const parkings = invitation.jenis_parkiran?.split(', ') || [];
                                   const seats = invitation.seat_number?.split(', ') || [];
                                   const legacyDrink = invitation.is_sweet_drink !== null && invitation.is_sweet_drink !== undefined ? (invitation.is_sweet_drink ? ' Manis' : ' Tawar') : '';
                                   
-                                  const v = vehicles[i] || '-';
-                                  const isWithParking = v.includes('(Parkir:');
-                                  const cleanVehicle = isWithParking ? v.split(' (Parkir:')[0] : v;
-                                  const parkingLoc = isWithParking ? v.split('(Parkir: ')[1].replace(')', '') : 'UMPP Pekajangan';
+                                  const cleanVehicle = vehicles[i] || '-';
+                                  const parkingLoc = parkings[i] || 'UMPP Pekajangan';
                                   
                                   const canvasId = `qr-${invitation.id}-${i}`;
                                   
