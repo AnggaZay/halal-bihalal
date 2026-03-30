@@ -167,8 +167,8 @@ export default function Lpj() {
       document.body.removeChild(link);
 
       alert("Yeay! LPJ Ajaib berhasil disusun dan didownload secara otomatis! 🎉");
-    } catch (error: any) {
-      alert("Gagal memproses LPJ otomatis: " + error.message);
+    } catch (error) {
+      alert("Gagal memproses LPJ otomatis: " + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsGenerating(false);
     }
