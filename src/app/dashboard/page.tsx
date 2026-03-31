@@ -28,62 +28,68 @@ export default function DashboardPage() {
   // State khusus untuk sub-menu Sumber Daya
   const [activeSumberDayaTab, setActiveSumberDayaTab] = useState<"overview" | "keuangan" | "perlengkapan" | "partnership" | "konsumsi">("overview");
 
-  // --- INTERCEPT TOMBOL BACK (MOBILE) & ESCAPE (PC) ---
+  // --- SINKRONISASI STATE DENGAN URL HASH UNTUK NAVIGASI ---
   useEffect(() => {
-    // Deteksi saat hardware "Back" button HP / history browser ditekan
-    const handlePopState = () => {
-      if (!window.location.hash) {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      
+      // Jika tidak ada hash, kembali ke default (overview peserta)
+      if (!hash || hash === 'peserta') {
+        setActiveTab("peserta");
         setActivePesertaTab("overview");
         setActiveSumberDayaTab("overview");
+        return;
+      }
+
+      const [main, sub] = hash.split('/');
+
+      if (main === 'sumber-daya') {
+        setActiveTab('sumber-daya');
+        setActiveSumberDayaTab((sub as any) || 'overview');
+        setActivePesertaTab('overview');
+      } else if (main === 'peserta') {
+        setActiveTab('peserta');
+        setActivePesertaTab((sub as any) || 'overview');
+        setActiveSumberDayaTab('overview');
+      } else if (main === 'dokumen') {
+        setActiveTab('dokumen');
+        setActivePesertaTab('overview');
+        setActiveSumberDayaTab('overview');
       }
     };
 
-    // Deteksi khusus kalau pakai PC dan pencet tombol Escape (ESC)
+    // Panggil sekali saat komponen pertama kali dimuat untuk membaca state awal dari URL
+    handleHashChange();
+
+    // Tambahkan listener untuk mendeteksi perubahan hash (saat tombol back/forward ditekan)
+    window.addEventListener('hashchange', handleHashChange);
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (window.location.hash === "#sub") window.history.back();
-        else {
-          setActivePesertaTab("overview");
-          setActiveSumberDayaTab("overview");
-        }
-      }
+      if (e.key === "Escape" && window.location.hash) window.history.back();
     };
-
-    window.addEventListener("popstate", handlePopState);
     window.addEventListener("keydown", handleKeyDown);
-    
+
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
-  // Fungsi Navigasi Sub-menu (Tambah Hash URL #sub biar HP bisa nangkep riwayatnya)
+  // Fungsi navigasi sekarang HANYA mengubah hash. State akan diurus oleh `useEffect` di atas.
   const navigatePeserta = (tab: "overview" | "data" | "kehadiran" | "fasilitas" | "asisten") => {
-    setActivePesertaTab(tab);
-    if (tab !== "overview") window.location.hash = "sub";
+    window.location.hash = tab === "overview" ? 'peserta' : `peserta/${tab}`;
   };
 
   const navigateSumberDaya = (tab: "overview" | "keuangan" | "perlengkapan" | "partnership" | "konsumsi") => {
-    setActiveSumberDayaTab(tab);
-    if (tab !== "overview") window.location.hash = "sub";
+    window.location.hash = tab === "overview" ? 'sumber-daya' : `sumber-daya/${tab}`;
   };
 
-  // Fungsi Kembali ke Overview
   const handleBackToOverview = () => {
-    if (window.location.hash === "#sub") window.history.back();
-    else {
-      setActivePesertaTab("overview");
-      setActiveSumberDayaTab("overview");
-    }
+    window.history.back();
   };
 
-  // Fungsi Navigasi Tab Utama di Bawah
   const switchMainTab = (tab: "peserta" | "sumber-daya" | "dokumen") => {
-    setActiveTab(tab);
-    setActivePesertaTab("overview");
-    setActiveSumberDayaTab("overview");
-    window.history.replaceState(null, "", window.location.pathname); // Bersihkan hash kalau ada
+    window.location.hash = tab;
   };
 
   return (
