@@ -43,7 +43,18 @@ export default function Perlengkapan() {
     fetchData(true);
 
     const channel = supabase.channel("realtime-perlengkapan")
-      .on("postgres_changes", { event: "*", schema: "public", table: "perlengkapan" }, () => fetchData(false))
+      .on(
+        "postgres_changes", 
+        { event: "*", schema: "public", table: "perlengkapan" }, 
+        (payload) => {
+          setItems((prev) => {
+            if (payload.eventType === 'INSERT') return [payload.new as ItemPerlengkapan, ...prev];
+            if (payload.eventType === 'UPDATE') return prev.map((item) => (item.id === payload.new.id ? (payload.new as ItemPerlengkapan) : item));
+            if (payload.eventType === 'DELETE') return prev.filter((item) => item.id !== (payload.old as { id: string }).id);
+            return prev;
+          });
+        }
+      )
       .subscribe();
 
     return () => {

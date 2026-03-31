@@ -38,82 +38,133 @@ interface InsightPartnership {
   statusColor: string;
 }
 
+interface PerlengkapanData {
+  id: string;
+  nama: string;
+  jenis: string;
+  jumlah: string;
+  status: 'belum' | 'sudah';
+}
+
+interface PartnershipData {
+  id: string;
+  nama: string;
+  keterangan: string;
+  tahap: 'Pengajuan' | 'Verifikasi' | 'Diterima' | 'Ditolak';
+  updated_at: string;
+}
+
 export default function OverviewSumberDaya({ onNavigate }: OverviewSumberDayaProps) {
-  const [sisaSaldo, setSisaSaldo] = useState(0);
-  const [recentPengeluaran, setRecentPengeluaran] = useState<Pengeluaran[]>([]);
+  // Raw Data States untuk Full Stream
+  const [pemasukanData, setPemasukanData] = useState<{id: string, nominal: number}[]>([]);
+  const [pengeluaranData, setPengeluaranData] = useState<Pengeluaran[]>([]);
+  const [perlengkapanData, setPerlengkapanData] = useState<PerlengkapanData[]>([]);
+  const [partnershipData, setPartnershipData] = useState<PartnershipData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // State untuk Real Data Perlengkapan & Partnership
-  const [progressPerlengkapan, setProgressPerlengkapan] = useState(0);
-  const [progressPartnership, setProgressPartnership] = useState(0);
-  const [insightPerlengkapan, setInsightPerlengkapan] = useState<InsightPerlengkapan[]>([]);
-  const [insightPartnership, setInsightPartnership] = useState<InsightPartnership[]>([]);
-
   // FULL STREAM: Fetch data keuangan Realtime
   useEffect(() => {
-    const fetchData = async (isInitial = false) => {
-      if (isInitial) setIsLoading(true);
+    const fetchData = async () => {
+      setIsLoading(true);
       
-      // Ambil semua data sumber daya sekaligus secara pararel
-      const [pemasukanRes, pengeluaranRes, recentPengeluaranRes, perlengkapanRes, partnershipRes] = await Promise.all([
-        supabase.from("pemasukan").select("nominal"),
-        supabase.from("pengeluaran").select("nominal"),
-        supabase.from("pengeluaran").select("*").order("created_at", { ascending: false }).limit(3),
+      const [pemRes, pengRes, perlRes, partRes] = await Promise.all([
+        supabase.from("pemasukan").select("id, nominal"),
+        supabase.from("pengeluaran").select("*").order("created_at", { ascending: false }),
         supabase.from("perlengkapan").select("*").order("created_at", { ascending: false }),
         supabase.from("partnership").select("*").order("created_at", { ascending: false }),
       ]);
 
-      const totalPemasukan = pemasukanRes.data?.reduce((acc, curr) => acc + (curr.nominal || 0), 0) || 0;
-      const totalPengeluaran = pengeluaranRes.data?.reduce((acc, curr) => acc + (curr.nominal || 0), 0) || 0;
-
-      setSisaSaldo(totalPemasukan - totalPengeluaran);
-      if (recentPengeluaranRes.data) setRecentPengeluaran(recentPengeluaranRes.data as Pengeluaran[]);
+      if (pemRes.data) setPemasukanData(pemRes.data);
+      if (pengRes.data) setPengeluaranData(pengRes.data as Pengeluaran[]);
+      if (perlRes.data) setPerlengkapanData(perlRes.data as PerlengkapanData[]);
+      if (partRes.data) setPartnershipData(partRes.data as PartnershipData[]);
       
-      // Kalkulasi Real Data Perlengkapan
-      if (perlengkapanRes.data) {
-        const perlengkapanData = perlengkapanRes.data;
-        const totalP = perlengkapanData.length;
-        const sudahP = perlengkapanData.filter(p => p.status === 'sudah').length;
-        setProgressPerlengkapan(totalP > 0 ? Math.round((sudahP / totalP) * 100) : 0);
-        
-        // Ambil max 3 perlengkapan yang 'belum' siap untuk ditaruh di Insight
-        const belumP = perlengkapanData.filter(p => p.status === 'belum').slice(0, 3);
-        setInsightPerlengkapan(belumP.map(item => ({
-          nama: item.nama, jenis: item.jenis, jumlah: item.jumlah, status: 'Belum Siap', statusColor: 'yellow'
-        })));
-      }
-
-      // Kalkulasi Real Data Partnership
-      if (partnershipRes.data) {
-        const partnershipData = partnershipRes.data;
-        const totalMitra = partnershipData.length;
-        const selesaiMitra = partnershipData.filter(p => p.tahap === 'Diterima' || p.tahap === 'Ditolak').length;
-        setProgressPartnership(totalMitra > 0 ? Math.round((selesaiMitra / totalMitra) * 100) : 0);
-        
-        // Ambil max 3 partnership yang 'belum selesai' (Pengajuan/Verifikasi) untuk di Insight
-        const belumMitra = partnershipData.filter(p => p.tahap === 'Pengajuan' || p.tahap === 'Verifikasi').slice(0, 3);
-        setInsightPartnership(belumMitra.map(item => ({
-          nama: item.nama,
-          tahap: item.tahap,
-          tanggal: item.updated_at ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.updated_at)) : '-',
-          status: item.tahap === 'Pengajuan' ? 'Follow Up' : 'Verifikasi',
-          statusColor: item.tahap === 'Pengajuan' ? 'yellow' : 'blue'
-        })));
-      }
-
-      if (isInitial) setIsLoading(false);
+      setIsLoading(false);
     };
-    fetchData(true);
+    fetchData();
 
     const channel = supabase.channel("realtime-overview-sumberdaya")
-      .on("postgres_changes", { event: "*", schema: "public", table: "pemasukan" }, () => fetchData(false))
-      .on("postgres_changes", { event: "*", schema: "public", table: "pengeluaran" }, () => fetchData(false))
-      .on("postgres_changes", { event: "*", schema: "public", table: "perlengkapan" }, () => fetchData(false))
-      .on("postgres_changes", { event: "*", schema: "public", table: "partnership" }, () => fetchData(false))
+      .on("postgres_changes", { event: "*", schema: "public", table: "pemasukan" }, (payload) => {
+        setPemasukanData((prev) => {
+          if (payload.eventType === 'INSERT') return [payload.new as {id: string, nominal: number}, ...prev];
+          if (payload.eventType === 'UPDATE') return prev.map((item) => item.id === payload.new.id ? payload.new as {id: string, nominal: number} : item);
+          if (payload.eventType === 'DELETE') return prev.filter((item) => item.id !== (payload.old as {id: string}).id);
+          return prev;
+        });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "pengeluaran" }, (payload) => {
+        setPengeluaranData((prev) => {
+          if (payload.eventType === 'INSERT') return [payload.new as Pengeluaran, ...prev];
+          if (payload.eventType === 'UPDATE') return prev.map((item) => item.id === payload.new.id ? payload.new as Pengeluaran : item);
+          if (payload.eventType === 'DELETE') return prev.filter((item) => item.id !== (payload.old as {id: string}).id);
+          return prev;
+        });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "perlengkapan" }, (payload) => {
+        setPerlengkapanData((prev) => {
+          if (payload.eventType === 'INSERT') return [payload.new as PerlengkapanData, ...prev];
+          if (payload.eventType === 'UPDATE') return prev.map((item) => item.id === payload.new.id ? payload.new as PerlengkapanData : item);
+          if (payload.eventType === 'DELETE') return prev.filter((item) => item.id !== (payload.old as {id: string}).id);
+          return prev;
+        });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "partnership" }, (payload) => {
+        setPartnershipData((prev) => {
+          if (payload.eventType === 'INSERT') return [payload.new as PartnershipData, ...prev];
+          if (payload.eventType === 'UPDATE') return prev.map((item) => item.id === payload.new.id ? payload.new as PartnershipData : item);
+          if (payload.eventType === 'DELETE') return prev.filter((item) => item.id !== (payload.old as {id: string}).id);
+          return prev;
+        });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, []);
+
+  // --- KALKULASI TURUNAN (Derived State) ---
+  const sisaSaldo = useMemo(() => {
+    const totalPem = pemasukanData.reduce((acc, curr) => acc + (curr.nominal || 0), 0);
+    const totalPeng = pengeluaranData.reduce((acc, curr) => acc + (curr.nominal || 0), 0);
+    return totalPem - totalPeng;
+  }, [pemasukanData, pengeluaranData]);
+
+  const recentPengeluaran = useMemo(() => pengeluaranData.slice(0, 3), [pengeluaranData]);
+
+  const progressPerlengkapan = useMemo(() => {
+    const total = perlengkapanData.length;
+    if (total === 0) return 0;
+    const sudah = perlengkapanData.filter(p => p.status === 'sudah').length;
+    return Math.round((sudah / total) * 100);
+  }, [perlengkapanData]);
+
+  const insightPerlengkapan = useMemo<InsightPerlengkapan[]>(() => {
+    return perlengkapanData
+      .filter(p => p.status === 'belum')
+      .slice(0, 3)
+      .map(item => ({
+        nama: item.nama, jenis: item.jenis, jumlah: item.jumlah, status: 'Belum Siap', statusColor: 'yellow'
+      }));
+  }, [perlengkapanData]);
+
+  const progressPartnership = useMemo(() => {
+    const total = partnershipData.length;
+    if (total === 0) return 0;
+    const selesai = partnershipData.filter(p => p.tahap === 'Diterima' || p.tahap === 'Ditolak').length;
+    return Math.round((selesai / total) * 100);
+  }, [partnershipData]);
+
+  const insightPartnership = useMemo<InsightPartnership[]>(() => {
+    return partnershipData
+      .filter(p => p.tahap === 'Pengajuan' || p.tahap === 'Verifikasi')
+      .slice(0, 3)
+      .map(item => ({
+        nama: item.nama,
+        tahap: item.tahap,
+        tanggal: item.updated_at ? new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.updated_at)) : '-',
+        status: item.tahap === 'Pengajuan' ? 'Follow Up' : 'Verifikasi',
+        statusColor: item.tahap === 'Pengajuan' ? 'yellow' : 'blue'
+      }));
+  }, [partnershipData]);
 
   // Kondisi untuk menampilkan tabel list insight jika progress belum 100% DAN datanya ada
   const showInsightPerlengkapan = progressPerlengkapan < 100 && insightPerlengkapan.length > 0;
