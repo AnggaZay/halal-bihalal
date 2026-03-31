@@ -45,11 +45,11 @@ export default function DashboardPage() {
 
       if (main === 'sumber-daya') {
         setActiveTab('sumber-daya');
-        setActiveSumberDayaTab((sub as any) || 'overview');
+        setActiveSumberDayaTab((sub as "overview" | "keuangan" | "perlengkapan" | "partnership" | "konsumsi") || 'overview');
         setActivePesertaTab('overview');
       } else if (main === 'peserta') {
         setActiveTab('peserta');
-        setActivePesertaTab((sub as any) || 'overview');
+        setActivePesertaTab((sub as "overview" | "data" | "kehadiran" | "fasilitas" | "asisten") || 'overview');
         setActiveSumberDayaTab('overview');
       } else if (main === 'dokumen') {
         setActiveTab('dokumen');
