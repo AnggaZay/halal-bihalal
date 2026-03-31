@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Import Komponen Peserta
 import OverviewPeserta from "@/components/dashboard/kepesertaan/overview-peserta";
@@ -28,6 +28,64 @@ export default function DashboardPage() {
   // State khusus untuk sub-menu Sumber Daya
   const [activeSumberDayaTab, setActiveSumberDayaTab] = useState<"overview" | "keuangan" | "perlengkapan" | "partnership" | "konsumsi">("overview");
 
+  // --- INTERCEPT TOMBOL BACK (MOBILE) & ESCAPE (PC) ---
+  useEffect(() => {
+    // Deteksi saat hardware "Back" button HP / history browser ditekan
+    const handlePopState = () => {
+      if (!window.location.hash) {
+        setActivePesertaTab("overview");
+        setActiveSumberDayaTab("overview");
+      }
+    };
+
+    // Deteksi khusus kalau pakai PC dan pencet tombol Escape (ESC)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (window.location.hash === "#sub") window.history.back();
+        else {
+          setActivePesertaTab("overview");
+          setActiveSumberDayaTab("overview");
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("keydown", handleKeyDown);
+    
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // Fungsi Navigasi Sub-menu (Tambah Hash URL #sub biar HP bisa nangkep riwayatnya)
+  const navigatePeserta = (tab: "overview" | "data" | "kehadiran" | "fasilitas" | "asisten") => {
+    setActivePesertaTab(tab);
+    if (tab !== "overview") window.location.hash = "sub";
+  };
+
+  const navigateSumberDaya = (tab: "overview" | "keuangan" | "perlengkapan" | "partnership" | "konsumsi") => {
+    setActiveSumberDayaTab(tab);
+    if (tab !== "overview") window.location.hash = "sub";
+  };
+
+  // Fungsi Kembali ke Overview
+  const handleBackToOverview = () => {
+    if (window.location.hash === "#sub") window.history.back();
+    else {
+      setActivePesertaTab("overview");
+      setActiveSumberDayaTab("overview");
+    }
+  };
+
+  // Fungsi Navigasi Tab Utama di Bawah
+  const switchMainTab = (tab: "peserta" | "sumber-daya" | "dokumen") => {
+    setActiveTab(tab);
+    setActivePesertaTab("overview");
+    setActiveSumberDayaTab("overview");
+    window.history.replaceState(null, "", window.location.pathname); // Bersihkan hash kalau ada
+  };
+
   return (
     // Tambahkan padding bottom (pb-24) agar konten paling bawah tidak tertutup oleh bottom navigation
     <div className="relative min-h-screen bg-gray-50 pb-24 md:pb-6 md:pl-64">
@@ -38,11 +96,11 @@ export default function DashboardPage() {
           {activeTab === "peserta" && (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 w-full">
               
-              {/* Tombol Kembali (Muncul saat masuk sub-menu M-Banking) */}
+              {/* Tombol Kembali (Muncul saat masuk sub-menu) */}
               {activePesertaTab !== "overview" && (
                 <div className="px-4 pt-6 pb-2 max-w-7xl mx-auto w-full">
                   <button
-                    onClick={() => setActivePesertaTab("overview")}
+                    onClick={handleBackToOverview}
                     className="flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-[#A6824A] transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-max"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -53,7 +111,7 @@ export default function DashboardPage() {
 
               {/* Konten Sub-menu yang Aktif */}
               <div className={`animate-in fade-in zoom-in-95 duration-200 ${activePesertaTab !== 'overview' ? 'px-4 max-w-7xl mx-auto' : ''}`}>
-                {activePesertaTab === "overview" && <OverviewPeserta onNavigate={setActivePesertaTab} />}
+                {activePesertaTab === "overview" && <OverviewPeserta onNavigate={navigatePeserta} />}
                 {activePesertaTab === "data" && <DataPeserta />}
                 {activePesertaTab === "kehadiran" && <Kehadiran />}
                 {activePesertaTab === "fasilitas" && <Fasilitas />}
@@ -68,7 +126,7 @@ export default function DashboardPage() {
               {activeSumberDayaTab !== "overview" && (
                 <div className="px-4 pt-6 pb-2 max-w-7xl mx-auto w-full">
                   <button
-                    onClick={() => setActiveSumberDayaTab("overview")}
+                    onClick={handleBackToOverview}
                     className="flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-[#A6824A] transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-max"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -78,7 +136,7 @@ export default function DashboardPage() {
               )}
 
               <div className={`animate-in fade-in zoom-in-95 duration-200 ${activeSumberDayaTab !== 'overview' ? 'p-4 md:p-6 max-w-7xl mx-auto' : ''}`}>
-                {activeSumberDayaTab === "overview" && <OverviewSumberDaya onNavigate={setActiveSumberDayaTab} />}
+                {activeSumberDayaTab === "overview" && <OverviewSumberDaya onNavigate={navigateSumberDaya} />}
                 {activeSumberDayaTab === "keuangan" && <Keuangan />}
                 {activeSumberDayaTab === "perlengkapan" && <Perlengkapan />}
                 {activeSumberDayaTab === "partnership" && <Partnership />}
@@ -117,10 +175,7 @@ export default function DashboardPage() {
 
           {/* Tab: Peserta */}
           <button
-            onClick={() => {
-              setActiveTab("peserta");
-              setActivePesertaTab("overview"); // Reset sub-tab saat pindah tab utama
-            }}
+            onClick={() => switchMainTab("peserta")}
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start w-full h-full md:h-auto space-y-1 md:space-y-0 md:space-x-3 transition-colors rounded-lg md:rounded-xl mx-1 md:mx-0 md:px-4 md:py-3 ${
               activeTab === "peserta" ? "text-blue-600 md:bg-blue-50" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50 md:hover:bg-gray-100"
             }`}
@@ -133,10 +188,7 @@ export default function DashboardPage() {
 
           {/* Tab: Sumber Daya */}
           <button
-            onClick={() => {
-              setActiveTab("sumber-daya");
-              setActiveSumberDayaTab("overview"); // Reset sub-tab saat pindah tab utama
-            }}
+            onClick={() => switchMainTab("sumber-daya")}
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start w-full h-full md:h-auto space-y-1 md:space-y-0 md:space-x-3 transition-colors rounded-lg md:rounded-xl mx-1 md:mx-0 md:px-4 md:py-3 ${
               activeTab === "sumber-daya" ? "text-blue-600 md:bg-blue-50" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50 md:hover:bg-gray-100"
             }`}
@@ -152,7 +204,7 @@ export default function DashboardPage() {
 
           {/* Tab: Dokumen */}
           <button
-            onClick={() => setActiveTab("dokumen")}
+            onClick={() => switchMainTab("dokumen")}
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start w-full h-full md:h-auto space-y-1 md:space-y-0 md:space-x-3 transition-colors rounded-lg md:rounded-xl mx-1 md:mx-0 md:px-4 md:py-3 ${
               activeTab === "dokumen" ? "text-blue-600 md:bg-blue-50" : "text-gray-500 hover:text-blue-500 hover:bg-gray-50 md:hover:bg-gray-100"
             }`}
