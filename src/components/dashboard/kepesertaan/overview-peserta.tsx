@@ -15,8 +15,26 @@ interface OverviewPesertaProps {
   onNavigate: (tab: "overview" | "data" | "kehadiran" | "fasilitas" | "asisten") => void;
 }
 
+interface Invitation {
+  id: string;
+  full_name?: string;
+  periode?: string;
+  is_present?: boolean;
+  jenis_parkiran?: string;
+  nama_asisten?: string;
+}
+
+interface PesertaBelumHadir {
+  id: string | number;
+  nama: string;
+  periode: string;
+  asisten: string;
+  parkiran: string;
+}
+
 export default function OverviewPeserta({ onNavigate }: OverviewPesertaProps) {
   const totalKursi = 40; // Di-fix menjadi 40 kursi
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [terbooking, setTerbooking] = useState(0);
   const [kehadiran, setKehadiran] = useState(0);
   const kursiKosong = totalKursi - kehadiran;
@@ -29,92 +47,87 @@ export default function OverviewPeserta({ onNavigate }: OverviewPesertaProps) {
   ];
   
   const [periodeBelumBooking, setPeriodeBelumBooking] = useState<string[]>(semuaPeriode);
-  const [pesertaBelumHadir, setPesertaBelumHadir] = useState<{
-    id: number | string;
-    nama: string;
-    periode: string;
-    asisten: string;
-    parkiran: string;
-  }[]>([]);
+  const [pesertaBelumHadir, setPesertaBelumHadir] = useState<PesertaBelumHadir[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      try {
-        setIsLoading(true);
-        // Ambil semua data dari tabel invitations
-        const { data, error } = await supabase
-          .from("invitations")
-          .select("*");
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("invitations")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-        if (error) throw error;
-
-        if (data) {
-          // LOG DATA: Cek console (F12) di browser untuk melihat nama kolom asli dari Supabase-mu!
-          console.log("Data mentah Supabase:", data);
-
-          // 1. Terbooking = Jumlah total tamu (Dihitung per kepala dari koma di kolom full_name)
-          const jumlahTerbooking = data.reduce((sum, item) => {
-            const count = item.full_name ? item.full_name.split(",").length : 1;
-            return sum + count;
-          }, 0);
-          setTerbooking(jumlahTerbooking);
-
-          // 2. Kehadiran = Peserta yang is_present-nya true (sudah check-in)
-          // Kursi Kosong otomatis dihitung di atas: totalKursi (40) - kehadiran
-          const dataHadir = data.filter(item => item.is_present === true);
-          const jumlahKehadiran = dataHadir.reduce((sum, item) => {
-            const count = item.full_name ? item.full_name.split(",").length : 1;
-            return sum + count;
-          }, 0);
-          setKehadiran(jumlahKehadiran);
-
-          // 3. Filter Periode Belum Booking (Periode yang belum ada di tabel)
-          const periodeSudahBooking = Array.from(
-            new Set(data.map((item) => item.periode).filter(Boolean))
-          );
-          const sisaPeriode = semuaPeriode.filter(
-            (p) => !periodeSudahBooking.includes(p)
-          );
-          setPeriodeBelumBooking(sisaPeriode);
-
-          // 4. Filter Peserta Belum Hadir
-          // (Udah booking tapi is_present belum true. Di-split karena 1 baris bisa berisi 2+ tamu!)
-          const belumHadirList: {
-            id: string;
-            nama: string;
-            periode: string;
-            asisten: string;
-            parkiran: string;
-          }[] = [];
-
-          data
-            .filter((item) => item.is_present !== true)
-            .forEach((item) => {
-              const names = item.full_name ? item.full_name.split(",").map((n: string) => n.trim()) : ["Tanpa Nama"];
-              const parkings = item.jenis_parkiran ? item.jenis_parkiran.split(",").map((p: string) => p.trim()) : [];
-              
-              names.forEach((nama: string, idx: number) => {
-                belumHadirList.push({
-                  id: `${item.id}-${idx}`,
-                  nama: nama,
-                  periode: item.periode || "-",
-                  asisten: item.nama_asisten || "-",
-                  parkiran: parkings[idx] || parkings[0] || "Belum dialokasikan"
-                });
-              });
-            });
-          setPesertaBelumHadir(belumHadirList);
-        }
-      } catch (error) {
+      if (!error && data) {
+        setInvitations(data);
+      } else {
         console.error("Gagal menarik data:", error);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     fetchDashboardData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    const channel = supabase
+      .channel("realtime-overview-peserta")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "invitations" },
+        (payload) => {
+          setInvitations((prev) => {
+            if (payload.eventType === 'INSERT') return [payload.new as Invitation, ...prev];
+            if (payload.eventType === 'UPDATE') return prev.map((inv) => (inv.id === payload.new.id ? (payload.new as Invitation) : inv));
+            if (payload.eventType === 'DELETE') return prev.filter((inv) => inv.id !== payload.old.id);
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
+
+  useEffect(() => {
+    const jumlahTerbooking = invitations.reduce((sum, item) => {
+      const count = item.full_name ? item.full_name.split(",").length : 1;
+      return sum + count;
+    }, 0);
+    setTerbooking(jumlahTerbooking);
+
+    const dataHadir = invitations.filter((item) => item.is_present === true);
+    const jumlahKehadiran = dataHadir.reduce((sum, item) => {
+      const count = item.full_name ? item.full_name.split(",").length : 1;
+      return sum + count;
+    }, 0);
+    setKehadiran(jumlahKehadiran);
+
+    const periodeSudahBooking = Array.from(
+      new Set(invitations.map((item) => item.periode).filter(Boolean))
+    );
+    const sisaPeriode = semuaPeriode.filter((p) => !periodeSudahBooking.includes(p));
+    setPeriodeBelumBooking(sisaPeriode);
+
+    const belumHadirList: PesertaBelumHadir[] = [];
+    invitations
+      .filter((item) => item.is_present !== true)
+      .forEach((item) => {
+        const names = item.full_name ? item.full_name.split(",").map((n: string) => n.trim()) : ["Tanpa Nama"];
+        const parkings = item.jenis_parkiran ? item.jenis_parkiran.split(",").map((p: string) => p.trim()) : [];
+        
+        names.forEach((nama: string, idx: number) => {
+          belumHadirList.push({
+            id: `${item.id}-${idx}`,
+            nama: nama,
+            periode: item.periode || "-",
+            asisten: item.nama_asisten || "-",
+            parkiran: parkings[idx] || parkings[0] || "Belum dialokasikan"
+          });
+        });
+      });
+    setPesertaBelumHadir(belumHadirList);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invitations]);
 
   // Pastikan loading selesai sebelum menampilkan status "Luar Biasa!"
   const isSemuaHadirDanBooking = !isLoading && periodeBelumBooking.length === 0 && pesertaBelumHadir.length === 0;
