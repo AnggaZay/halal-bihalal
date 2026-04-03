@@ -438,7 +438,22 @@ export default function DataPeserta() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Periode</label>
-                  <input type="text" value={editForm.periode || ''} onChange={(e) => setEditForm({...editForm, periode: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none" />
+                  <select value={editForm.periode || ''} onChange={(e) => setEditForm({...editForm, periode: e.target.value})} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A6824A]/50 focus:border-[#A6824A] outline-none appearance-none bg-white">
+                    <option value="">Pilih Periode</option>
+                    <option value="2024/2026">2024/2026</option>
+                    <option value="2021/2023">2021/2023</option>
+                    <option value="2019/2021">2019/2021</option>
+                    <option value="2017/2019">2017/2019</option>
+                    <option value="2015/2017">2015/2017</option>
+                    <option value="2013/2015">2013/2015</option>
+                    <option value="2011/2013">2011/2013</option>
+                    <option value="2009/2011">2009/2011</option>
+                    <option value="2007/2009">2007/2009</option>
+                    <option value="2005/2007">2005/2007</option>
+                    <option value="2003/2005">2003/2005</option>
+                    <option value="2001/2003">2001/2003</option>
+                    <option value="1999/2001">1999/2001</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Kursi</label>

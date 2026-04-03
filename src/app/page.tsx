@@ -247,7 +247,7 @@ export default function HalalBihalalPage() {
 
     const tuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007"];
     const agakTuaPeriods = ["2007/2009", "2009/2011", "2011/2013", "2013/2015"];
-    // Sisanya (2015/2017 - 2021/2023) adalah muda
+    // Sisanya (2015/2017 - 2024/2026) adalah muda
 
     if (tuaPeriods.includes(periode)) {
       asistenNama = "M. Amri Albani";
@@ -258,25 +258,6 @@ export default function HalalBihalalPage() {
     } else {
       asistenNama = "M. Fikri Al-Khasani";
       asistenWA = "+6285137436224";
-    }
-
-    // --- LOGIKA ALOKASI PARKIR ---
-    const parkirTuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007", "2007/2009", "2009/2011"];
-    const isParkirTua = parkirTuaPeriods.includes(periode);
-
-    let warmindoMotorCount = 0;
-    if (isParkirTua) {
-      const { data: parkedMotors } = await supabase
-        .from('invitations')
-        .select('vehicle')
-        .like('vehicle', '%Warmindo 17%');
-
-      if (parkedMotors) {
-        warmindoMotorCount = parkedMotors.reduce((acc, curr) => {
-          const matches = curr.vehicle?.match(/Warmindo 17/g);
-          return acc + (matches ? matches.length : 0);
-        }, 0);
-      }
     }
 
     // Kumpulkan data dinamis sesuai jumlah tamu yang dipilih
@@ -298,12 +279,9 @@ export default function HalalBihalalPage() {
         else if (drinkChoice === 'air_mineral') drinks.push('Air Mineral');
 
         const vehicleType = formData.get(`vehicle_${i}`) as string;
-        let parkingLoc = "UMPP Pekajangan";
-
-        if (vehicleType === "Motor" && isParkirTua && warmindoMotorCount < 20) {
-          parkingLoc = "Warmindo 17";
-          warmindoMotorCount++; // Tambah hitungan agar tamu ke-2 di form yang sama kebagian jika masih sisa
-        }
+        
+        // ✨ Semua tamu sekarang dipusatkan ke Warmindo 17
+        const parkingLoc = "Warmindo 17";
 
         vehicles.push(vehicleType);
         parkings.push(parkingLoc);
@@ -529,6 +507,7 @@ export default function HalalBihalalPage() {
                                   <div className="relative">
                                     <select name="periode" required className="w-full bg-[#101111] border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] py-3 px-1 text-sm rounded-t-md focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors appearance-none">
                                       <option value="" className="bg-[#101111]">Pilih Periode</option>
+                                      <option value="2024/2026" className="bg-[#101111]">2024/2026</option>
                                       <option value="2021/2023" className="bg-[#101111]">2021/2023</option>
                                       <option value="2019/2021" className="bg-[#101111]">2019/2021</option>
                                       <option value="2017/2019" className="bg-[#101111]">2017/2019</option>
@@ -659,7 +638,7 @@ export default function HalalBihalalPage() {
                                   const legacyDrink = invitation.is_sweet_drink !== null && invitation.is_sweet_drink !== undefined ? (invitation.is_sweet_drink ? ' Manis' : ' Tawar') : '';
                                   
                                   const cleanVehicle = vehicles[i] || '-';
-                                  const parkingLoc = parkings[i] || 'UMPP Pekajangan';
+                                  const parkingLoc = parkings[i] || 'Warmindo 17';
                                   
                                   const canvasId = `qr-${invitation.id}-${i}`;
                                   

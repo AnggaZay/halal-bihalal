@@ -43,7 +43,8 @@ export default function OverviewPeserta({ onNavigate }: OverviewPesertaProps) {
   const semuaPeriode = [
     "1999/2001", "2001/2003", "2003/2005", "2005/2007",
     "2007/2009", "2009/2011", "2011/2013", "2013/2015",
-    "2015/2017", "2017/2019", "2019/2021", "2021/2023"
+    "2015/2017", "2017/2019", "2019/2021", "2021/2023",
+    "2024/2026"
   ];
   
   const [periodeBelumBooking, setPeriodeBelumBooking] = useState<string[]>(semuaPeriode);

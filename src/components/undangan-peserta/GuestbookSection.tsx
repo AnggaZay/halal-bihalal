@@ -10,6 +10,7 @@ interface FormDataState {
   ucapan: string;
   kehadiran: string;
   jumlahTamu: string;
+  periode: string;
 }
 
 // ✨ Bikin guestName opsional (?) agar komponen tidak error jika dipanggil kosongan di halaman lain
@@ -18,7 +19,8 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
     nama: guestName || '', // ✨ Langsung inisialisasi dari awal (Aman & Lebih Cepat)
     ucapan: '',
     kehadiran: '',
-    jumlahTamu: '1' // Default 1 orang
+    jumlahTamu: '1', // Default 1 orang
+    periode: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false); // ✨ State untuk pop-up sukses
@@ -35,7 +37,8 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
           kehadiran: formData.kehadiran,
           // ✨ Jaga-jaga kalau parseInt gagal karena input aneh, kita set default 0
           jumlah_tamu: parseInt(formData.jumlahTamu) || 0, 
-          ucapan: formData.ucapan
+          ucapan: formData.ucapan,
+          periode: formData.periode
         }
       ]);
 
@@ -52,7 +55,8 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
         nama: guestName || '',
         ucapan: '',
         kehadiran: '',
-        jumlahTamu: '1'
+        jumlahTamu: '1',
+        periode: ''
       });
     }
   };
@@ -122,6 +126,39 @@ export default function GuestbookSection({ guestName }: { guestName?: string | n
             className="w-full p-4 bg-[#101111]/50 border border-[#A6824A]/50 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-[#A6824A] transition-all text-[#E6E2DA] placeholder:text-[#E6E2DA]/50"
             onChange={(e) => setFormData({...formData, nama: e.target.value})}
           />
+        </div>
+
+        {/* Dropdown Periode */}
+        <div className="space-y-2">
+          <label className="text-[10px] uppercase tracking-widest text-[#E6E2DA]/80 ml-1">Periode Pimpinan</label>
+          <div className="relative">
+            <select 
+              required
+              value={formData.periode}
+              className="w-full p-4 bg-[#101111]/50 border border-[#A6824A]/50 rounded-xl text-sm appearance-none focus:outline-none focus:ring-1 focus:ring-[#A6824A] transition-all text-[#E6E2DA]"
+              onChange={(e) => setFormData({...formData, periode: e.target.value})}
+            >
+              <option value="" className="bg-[#101111]">Pilih Periode</option>
+              <option value="2024/2026" className="bg-[#101111]">2024/2026</option>
+              <option value="2021/2023" className="bg-[#101111]">2021/2023</option>
+              <option value="2019/2021" className="bg-[#101111]">2019/2021</option>
+              <option value="2017/2019" className="bg-[#101111]">2017/2019</option>
+              <option value="2015/2017" className="bg-[#101111]">2015/2017</option>
+              <option value="2013/2015" className="bg-[#101111]">2013/2015</option>
+              <option value="2011/2013" className="bg-[#101111]">2011/2013</option>
+              <option value="2009/2011" className="bg-[#101111]">2009/2011</option>
+              <option value="2007/2009" className="bg-[#101111]">2007/2009</option>
+              <option value="2005/2007" className="bg-[#101111]">2005/2007</option>
+              <option value="2003/2005" className="bg-[#101111]">2003/2005</option>
+              <option value="2001/2003" className="bg-[#101111]">2001/2003</option>
+              <option value="1999/2001" className="bg-[#101111]">1999/2001</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A6824A]">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Dropdown Kehadiran */}

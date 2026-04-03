@@ -65,7 +65,7 @@ export default function Asisten() {
   const asistenList: Record<string, AsistenData> = {
     amri: { nama: "M. Amri Albani", tugas: "Periode Sepuh (1999 - 2007)", totalTamu: 0, tamuHadir: 0, daftarTamu: [] },
     taufiq: { nama: "M. Taufiqurrahman", tugas: "Periode Pertengahan (2007 - 2015)", totalTamu: 0, tamuHadir: 0, daftarTamu: [] },
-    fikri: { nama: "M. Fikri Al-Khasani", tugas: "Periode Muda (2015 - 2023)", totalTamu: 0, tamuHadir: 0, daftarTamu: [] },
+    fikri: { nama: "M. Fikri Al-Khasani", tugas: "Periode Muda (2015 - 2026)", totalTamu: 0, tamuHadir: 0, daftarTamu: [] },
   };
 
   const tuaPeriods = ["1999/2001", "2001/2003", "2003/2005", "2005/2007"];

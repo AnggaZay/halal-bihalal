@@ -95,7 +95,6 @@ export default function Fasilitas() {
   // Hitung Statistik
   const stats = useMemo(() => {
     const warmindo = { total: 0, hadir: 0 };
-    const umpp = { total: 0, hadir: 0 };
     const mobil = { total: 0, hadir: 0 };
     const motor = { total: 0, hadir: 0 };
 
@@ -105,13 +104,12 @@ export default function Fasilitas() {
       const vehicleStr = p.vehicle.toLowerCase();
 
       if (parkirStr.includes('warmindo')) { warmindo.total++; if (isHadir) warmindo.hadir++; }
-      else if (parkirStr.includes('umpp')) { umpp.total++; if (isHadir) umpp.hadir++; }
 
       if (vehicleStr.includes('mobil')) { mobil.total++; if (isHadir) mobil.hadir++; }
       else if (vehicleStr.includes('motor')) { motor.total++; if (isHadir) motor.hadir++; }
     });
 
-    return { warmindo, umpp, mobil, motor };
+    return { warmindo, mobil, motor };
   }, [flattenedData]);
 
   return (
@@ -126,7 +124,7 @@ export default function Fasilitas() {
         
         {/* KOLOM KIRI (Insight Cards) */}
         <div className="w-full md:w-5/12 lg:w-4/12 xl:w-1/3">
-          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4 lg:gap-5">
             
             {/* Card: Warmindo 17 */}
             <div className="bg-white p-4 md:p-5 rounded-2xl border border-red-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between relative overflow-hidden group">
@@ -141,23 +139,6 @@ export default function Fasilitas() {
                 </div>
                 <div className="w-full bg-red-50 rounded-full h-1 md:h-1.5 mt-3">
                   <div className="bg-red-500 h-full rounded-full transition-all duration-1000" style={{ width: `${stats.warmindo.total > 0 ? (stats.warmindo.hadir / stats.warmindo.total) * 100 : 0}%` }}></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card: UMPP */}
-            <div className="bg-white p-4 md:p-5 rounded-2xl border border-blue-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between relative overflow-hidden group">
-              <div className="absolute -right-4 -bottom-4 text-blue-50 group-hover:scale-110 transition-transform duration-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
-              </div>
-              <div className="relative z-10">
-                <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">UMPP Pekajangan</p>
-                <div className="flex items-baseline gap-1 md:gap-2">
-                  <span className="text-2xl md:text-4xl font-black text-blue-600 tracking-tighter">{isLoading ? "..." : stats.umpp.hadir}</span>
-                  <span className="text-[10px] md:text-sm font-medium text-gray-400">/ {stats.umpp.total}</span>
-                </div>
-                <div className="w-full bg-blue-50 rounded-full h-1 md:h-1.5 mt-3">
-                  <div className="bg-blue-500 h-full rounded-full transition-all duration-1000" style={{ width: `${stats.umpp.total > 0 ? (stats.umpp.hadir / stats.umpp.total) * 100 : 0}%` }}></div>
                 </div>
               </div>
             </div>
