@@ -11,6 +11,7 @@ interface FlattenedData {
   name: string;
   periode: string;
   seat: string;
+  parkiran: string;
   asisten: string;
   is_present: boolean;
 }
@@ -133,7 +134,12 @@ export default function Kehadiran() {
           setScannedData(payload);
 
           // 2. UPDATE DATABASE DI LATAR BELAKANG (Check-in = true)
-          supabase.from("invitations").update({ is_present: true }).eq("id", payload.id).then();
+          // Update local state secara langsung agar UI instant merespon kehadiran!
+          setInvitations((prev) => prev.map((inv) => (inv.id === payload.id ? { ...inv, is_present: true } : inv)));
+
+          supabase.from("invitations").update({ is_present: true }).eq("id", payload.id).then(({ error }) => {
+            if (error) console.error("Gagal sinkronisasi kehadiran ke database:", error);
+          });
 
           // 3. MULAI SEQUENS ANIMASI: Munculkan layar "Selamat Datang"
           setOverlayState("welcome");
@@ -188,6 +194,7 @@ export default function Kehadiran() {
   const flattenedData: FlattenedData[] = useMemo(() => invitations.flatMap((inv) => {
     const names = inv.full_name ? inv.full_name.split(",").map(n => n.trim()) : ["Tanpa Nama"];
     const seats = inv.seat_number ? inv.seat_number.split(",").map(s => s.trim()) : [];
+    const parkings = inv.jenis_parkiran ? inv.jenis_parkiran.split(",").map(p => p.trim()) : [];
     const asisten = inv.nama_asisten || getAsistenByPeriode(inv.periode);
 
     return names.map((name, idx) => ({
@@ -195,6 +202,7 @@ export default function Kehadiran() {
       name: name,
       periode: inv.periode || '-',
       seat: seats[idx] || seats[0] || 'N/A',
+      parkiran: parkings[idx] || parkings[0] || 'N/A',
       asisten: asisten,
       is_present: !!inv.is_present, // Paksa menjadi tipe boolean
     }));
@@ -282,7 +290,7 @@ export default function Kehadiran() {
               {/* Konten Berdasarkan Mode */}
               {activeMainMode === 'presensi' ? (
                 <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                  {isLoading ? <p className="text-center text-gray-500 p-8 animate-pulse">Memuat...</p> : sortedPresensi.map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode}`} isPresent={p.is_present} />)}
+                  {isLoading ? <p className="text-center text-gray-500 p-8 animate-pulse">Memuat...</p> : sortedPresensi.map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode} • Kursi: ${p.seat} • Parkir: ${p.parkiran}`} isPresent={p.is_present} />)}
                 </div>
               ) : (
                 <div>
@@ -305,7 +313,7 @@ export default function Kehadiran() {
                           {filteredAsisten.filter(p => !p.is_present).length === 0 ? (
                             <p className="text-xs text-gray-400 italic p-3 bg-gray-50 rounded-lg border border-gray-100 text-center">Semua tamu sudah hadir.</p>
                           ) : (
-                            filteredAsisten.filter(p => !p.is_present).map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode} • Kursi ${p.seat}`} isPresent={p.is_present} />)
+                            filteredAsisten.filter(p => !p.is_present).map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode} • Kursi ${p.seat} • Parkir: ${p.parkiran}`} isPresent={p.is_present} />)
                           )}
                         </div>
 
@@ -318,7 +326,7 @@ export default function Kehadiran() {
                           {filteredAsisten.filter(p => p.is_present).length === 0 ? (
                             <p className="text-xs text-gray-400 italic p-3 bg-gray-50 rounded-lg border border-gray-100 text-center">Belum ada tamu yang hadir.</p>
                           ) : (
-                            filteredAsisten.filter(p => p.is_present).map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode} • Kursi ${p.seat}`} isPresent={p.is_present} />)
+                            filteredAsisten.filter(p => p.is_present).map(p => <ListItem key={p.id} name={p.name} detail={`Periode ${p.periode} • Kursi ${p.seat} • Parkir: ${p.parkiran}`} isPresent={p.is_present} />)
                           )}
                         </div>
                       </>
@@ -380,24 +388,33 @@ export default function Kehadiran() {
                )}
 
                {/* ANIMASI 2: DUDUK DI MEJA */}
-               {overlayState === "seat" && (
-                 <motion.div
-                   key="seat"
-                   initial={{ scale: 0.8, opacity: 0, y: 20 }}
-                   animate={{ scale: 1, opacity: 1, y: 0 }}
-                   exit={{ scale: 1.1, opacity: 0, y: -20 }}
-                   transition={{ duration: 0.6, ease: "easeOut" }}
-                   className="text-center p-8 w-full"
-                 >
-                    <p className="text-3xl md:text-5xl text-[#E6E2DA]/90 font-medium mb-6">Silakan</p>
-                    <h2 className="text-4xl md:text-6xl font-bold text-[#E6E2DA] mb-8">
-                      Duduk di Meja
-                    </h2>
-                    <div className="text-8xl md:text-[12rem] font-bold text-[#A6824A] drop-shadow-[0_0_40px_rgba(166,130,74,0.7)] leading-none inline-block bg-[#A6824A]/10 px-12 py-8 rounded-3xl border border-[#A6824A]/30">
-                      {scannedData?.meja}
-                    </div>
-                 </motion.div>
-               )}
+               {overlayState === "seat" && (() => {
+                 const person = flattenedData.find(p => p.id.startsWith(scannedData?.id || '') && p.name === scannedData?.nama);
+                 return (
+                   <motion.div
+                     key="seat"
+                     initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                     animate={{ scale: 1, opacity: 1, y: 0 }}
+                     exit={{ scale: 1.1, opacity: 0, y: -20 }}
+                     transition={{ duration: 0.6, ease: "easeOut" }}
+                     className="text-center p-8 w-full"
+                   >
+                      <p className="text-3xl md:text-5xl text-[#E6E2DA]/90 font-medium mb-6">Silakan</p>
+                      <h2 className="text-4xl md:text-6xl font-bold text-[#E6E2DA] mb-8">
+                        Duduk di Meja
+                      </h2>
+                      <div className="text-8xl md:text-[12rem] font-bold text-[#A6824A] drop-shadow-[0_0_40px_rgba(166,130,74,0.7)] leading-none inline-block bg-[#A6824A]/10 px-12 py-8 rounded-3xl border border-[#A6824A]/30 mb-8">
+                        {scannedData?.meja}
+                      </div>
+                      {person && (
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-[#E6E2DA]/90 text-sm md:text-lg font-medium">
+                          <span className="bg-[#A6824A]/20 px-6 py-3 rounded-xl border border-[#A6824A]/30">🚗 Parkir: <b>{person.parkiran}</b></span>
+                          <span className="bg-[#A6824A]/20 px-6 py-3 rounded-xl border border-[#A6824A]/30">👤 Asisten: <b>{person.asisten}</b></span>
+                        </div>
+                      )}
+                   </motion.div>
+                 );
+               })()}
 
               {/* ANIMASI 3: ERROR BUKAN TIKET */}
               {overlayState === "error" && (
