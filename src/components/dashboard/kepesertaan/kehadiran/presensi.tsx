@@ -114,9 +114,8 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 30, // ✨ Ditingkatkan ke 30 frame per detik agar 3x lebih responsif
-        // ✨ Hapus qrbox dan aspectRatio agar area scan menjadi FULL Layar (tanpa bingkai pembatas kotak)
-        // Fokus hanya kamera, hapus opsi "Upload Gambar" agar UI rapi
+        fps: 10, // Kembalikan ke 10 agar memori HP tidak nge-lag/macet saat scan
+        qrbox: { width: 250, height: 250 }, // ✨ WAJIB ADA: Membatasi area scan agar proses decode 10x lipat lebih cepat & akurat
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         // ✨ RAHASIA NGEBUT: Fokus 100% pencarian ke QR Code saja (abaikan barcode minimarket dll)
         formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
@@ -413,9 +412,9 @@ export default function Kehadiran() {
         /* Control Panel di Pindah ke Bawah (Bottom) agar tidak menghalangi kamera */
         #qr-reader__dashboard_section { padding: 1.5rem; padding-bottom: 2.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; bottom: 0; left: 0; right: 0; z-index: 30; border-top: 1px solid rgba(166, 130, 74, 0.3); display: flex; flex-direction: column; align-items: center; }
         
-        /* Bikin Video Cover Seluruh Layar (Full View Tepi ke Tepi) */
-        #qr-reader__scan_region { flex: 1; width: 100vw !important; height: 100dvh !important; min-height: 100%; position: fixed; top: 0; left: 0; z-index: 10; overflow: hidden; }
-        #qr-reader__scan_region video { object-fit: cover !important; width: 100vw !important; height: 100dvh !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+        /* Fix Rasio Kamera agar tidak gepeng & Area Scan Akurat (Penyebab gagal scan) */
+        #qr-reader__scan_region { flex: 1; display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; overflow: hidden; background: #000; }
+        #qr-reader__scan_region video { max-width: 100vw !important; max-height: 100dvh !important; object-fit: contain !important; }
         
         #qr-reader button {
           background-color: #A6824A !important;
