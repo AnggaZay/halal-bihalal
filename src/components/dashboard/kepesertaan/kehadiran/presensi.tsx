@@ -115,7 +115,14 @@ export default function Kehadiran() {
       "qr-reader",
       {
         fps: 10,
-        qrbox: 250 // ✨ Gunakan angka solid tunggal: Konfigurasi paling stabil (anti-bug) di semua HP
+        qrbox: 250, // ✨ Gunakan angka solid tunggal: Konfigurasi paling stabil (anti-bug) di semua HP
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        // ✨ KUNCI SAFARI IPAD: Minta resolusi HD agar titik QR tidak blur. 
+        // Tanpa ini, Safari iPad default ke resolusi sangat rendah (VGA)
+        videoConstraints: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
       },
       false // Matikan mode verbose (log berisik di console)
     );
