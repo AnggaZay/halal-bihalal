@@ -114,13 +114,8 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 20, // ✨ Dipercepat lagi untuk sensitivitas maksimal
-        // ✨ Bikin kotak responsif: 80% layar. Karena QR Code berisi JSON panjang (sangat padat)
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-          return { width: Math.floor(minEdgeSize * 0.8), height: Math.floor(minEdgeSize * 0.8) };
-        },
-        videoConstraints: { width: { ideal: 1280 }, height: { ideal: 720 } }, // Minta resolusi HD minimal tanpa memaksa kamera belakang
+        fps: 10,
+        qrbox: { width: 250, height: 250 }, // ✨ KEMBALIKAN KE KOTAK PASTI: Area dinamis bikin koordinat meleset di mesin ZXing!
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         // ✨ RAHASIA NGEBUT: Fokus 100% pencarian ke QR Code saja (abaikan barcode minimarket dll)
         formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
@@ -132,6 +127,8 @@ export default function Kehadiran() {
 
     scanner.render(
       async (decodedText) => {
+        console.log("RAW HASIL SCAN:", decodedText);
+
         // Jika sedang memproses data/animasi jalan, abaikan scan baru
         if (isProcessing.current) return;
 
@@ -168,7 +165,8 @@ export default function Kehadiran() {
 
         } catch (error) {
           // Jika bukan format JSON / bukan QR dari sistem kita, diamkan saja
-          console.log("Format QR tidak dikenali");
+          console.error("Gagal membaca JSON QR:", error);
+          console.log("Isi teks yang gagal di-parse:", decodedText);
         }
       },
       (err) => {
@@ -417,9 +415,8 @@ export default function Kehadiran() {
         /* Control Panel di Pindah ke Bawah (Bottom) agar tidak menghalangi kamera */
         #qr-reader__dashboard_section { padding: 1.5rem; padding-bottom: 2.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; bottom: 0; left: 0; right: 0; z-index: 30; border-top: 1px solid rgba(166, 130, 74, 0.3); display: flex; flex-direction: column; align-items: center; }
         
-        /* Fix Rasio Kamera agar tidak gepeng & Area Scan Akurat (Penyebab gagal scan) */
-        #qr-reader__scan_region { flex: 1; display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; overflow: hidden; background: #000; }
-        #qr-reader__scan_region video { max-width: 100vw !important; max-height: 100dvh !important; object-fit: contain !important; }
+        /* ✨ HAPUS OVERRIDE CSS PADA VIDEO: Biarkan library mengatur ukuran aslinya agar area 'crop' sinkron dengan visual kotak pembidik! */
+        #qr-reader__scan_region { flex: 1; display: flex; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; background: #000; overflow: hidden; }
         
         #qr-reader button {
           background-color: #A6824A !important;
