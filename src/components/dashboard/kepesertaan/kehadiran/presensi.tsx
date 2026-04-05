@@ -109,8 +109,7 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 10,
-        qrbox: { width: 250, height: 250 }
+        fps: 1sToSupport: [Html5QrcodeSupportedFormats.QR_CODE] // Paksa hanya baca QR Code (jauh lebih cepat)
       },
       false // Matikan mode verbose (log berisik di console)
     );
