@@ -115,14 +115,7 @@ export default function Kehadiran() {
       "qr-reader",
       {
         fps: 10,
-        qrbox: 250, // ✨ Gunakan angka solid tunggal: Konfigurasi paling stabil (anti-bug) di semua HP
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-        // ✨ KUNCI SAFARI IPAD: Minta resolusi HD agar titik QR tidak blur. 
-        // Tanpa ini, Safari iPad default ke resolusi sangat rendah (VGA)
-        videoConstraints: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
+        qrbox: 250
       },
       false // Matikan mode verbose (log berisik di console)
     );
@@ -350,8 +343,8 @@ export default function Kehadiran() {
           </button>
 
           {/* LAYER 1: KAMERA STANDBY (Background Full Edge-to-Edge) */}
-          <div className="absolute inset-0 z-10 flex flex-col">
-             <div id="qr-reader" className="w-full h-full"></div>
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#101111] p-4">
+         <div id="qr-reader" className="w-full max-w-md bg-white rounded-2xl overflow-hidden shadow-2xl"></div>
           </div>
 
       {/* LAYER 2: OVERLAY SAMBUTAN (Animasi Pop-up) */}
@@ -412,36 +405,27 @@ export default function Kehadiran() {
 
       {/* CSS KHUSUS UNTUK MEMPERCANTIK UI BAWAAN HTML5-QRCODE */}
       <style dangerouslySetInnerHTML={{__html: `
-        #qr-reader { border: none !important; width: 100vw !important; height: 100dvh !important; display: flex; flex-direction: column; background: #000; }
-        
-        /* Control Panel di Pindah ke Bawah (Bottom) agar tidak menghalangi kamera */
-        #qr-reader__dashboard_section { padding: 1.5rem; padding-bottom: 2.5rem; background: rgba(16, 17, 17, 0.85); backdrop-filter: blur(10px); position: absolute; bottom: 0; left: 0; right: 0; z-index: 30; border-top: 1px solid rgba(166, 130, 74, 0.3); display: flex; flex-direction: column; align-items: center; }
-        
-        /* ✨ Reset Area Scan ke Default bawaan library agar mesin bisa membaca gambar kamera (canvas) dengan benar */
-        #qr-reader__scan_region { flex: 1; display: flex; flex-direction: column; justify-content: center; background: #000; }
+        #qr-reader { border: none !important; }
         
         #qr-reader button {
           background-color: #A6824A !important;
           color: #101111 !important;
           border: none !important;
-          padding: 10px 20px !important;
+          padding: 8px 16px !important;
           border-radius: 8px !important;
           font-weight: bold !important;
           cursor: pointer !important;
-          margin-top: 16px !important;
-          margin-bottom: 8px !important;
+          margin: 8px !important;
           transition: all 0.2s;
         }
         #qr-reader button:hover { opacity: 0.8; }
-        #qr-reader__dashboard_section_csr span { color: #E6E2DA !important; font-weight: 600; font-size: 14px; }
+        #qr-reader__dashboard_section_csr span { color: #101111 !important; font-weight: 600; font-size: 14px; }
         #qr-reader__camera_selection { 
           margin-bottom: 12px !important; 
           padding: 10px !important; 
           border-radius: 8px !important; 
           border: 1px solid #A6824A !important; 
           width: 100%; 
-          background: #101111;
-          color: #E6E2DA;
         }
         #qr-reader a { display: none !important; } /* Hilangkan link sponsor html5-qrcode */
       `}} />
