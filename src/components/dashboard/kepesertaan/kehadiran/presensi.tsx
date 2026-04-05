@@ -120,11 +120,8 @@ export default function Kehadiran() {
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         // ✨ RAHASIA NGEBUT: Fokus 100% pencarian ke QR Code saja (abaikan barcode minimarket dll)
         formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-        // ✨ RAHASIA RESOLUSI: Minta resolusi ideal tanpa batasan max agar iPad memakai lensa paling tajamnya
-        videoConstraints: {
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-        }
+        // Mencegah scanner stuck di kamera terakhir yang digunakan
+        rememberLastUsedCamera: false
       },
       false // Matikan mode verbose (log berisik di console)
     );
