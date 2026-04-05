@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { Html5QrcodeScanner } from "html5-qrcode";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Interface untuk data yang sudah di-preteli (flatten) per orang
@@ -110,9 +110,16 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 15,
-        qrbox: 250,
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] // Paksa hanya baca QR Code (jauh lebih cepat)
+        fps: 10, // Turunkan sedikit agar HP tidak panas & auto-focus kamera bekerja maksimal
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          // Bikin ukuran kotak pemindai responsif (75% dari lebar/tinggi layar terkecil)
+          const minEdgePercentage = 0.75; 
+          const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+          const qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+          return { width: qrboxSize, height: qrboxSize };
+        },
+        rememberLastUsedCamera: true, // Ingat pilihan kamera belakang
+        // formatsToSupport dihapus agar fallback ke default (mencegah bug undefined dari enum)
       },
       false // Matikan mode verbose (log berisik di console)
     );

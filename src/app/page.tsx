@@ -690,7 +690,7 @@ export default function HalalBihalalPage() {
                                         
                                         <div className="relative inline-block">
                                           <div className="p-2 bg-[#FFFFFF] border border-[#A6824A]/20 rounded-xl shadow-inner">
-                                            <QRCodeCanvas id={canvasId} value={qrPayload} size={200} level="M" includeMargin={true} fgColor="#000000" bgColor="#FFFFFF" />
+                                            <QRCodeCanvas id={canvasId} value={qrPayload} size={200} level="L" includeMargin={true} fgColor="#000000" bgColor="#FFFFFF" />
                                           </div>
                                           <button 
                                             onClick={() => downloadQR(canvasId, name)}
