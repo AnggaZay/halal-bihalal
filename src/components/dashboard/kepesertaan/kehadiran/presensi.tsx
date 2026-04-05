@@ -33,13 +33,7 @@ interface Invitation {
 interface QRPayload {
   id: string;
   nama: string;
-  periode: string;
   meja: string;
-  makanan: string;
-  minuman: string;
-  kendaraan: string;
-  parkir: string;
-  asisten: string;
 }
 
 // --- Komponen ListItem dipindah ke LUAR agar tidak re-render terus menerus ---
@@ -58,7 +52,8 @@ const ListItem = ({ name, detail, isPresent }: { name: string, detail: string, i
 );
 
 export default function Kehadiran() {
-  const [overlayState, setOverlayState] = useState<"none" | "welcome" | "seat">("none");
+  const [overlayState, setOverlayState] = useState<"none" | "welcome" | "seat" | "error">("none");
+  const [errorMessage, setErrorMessage] = useState("");
   const [scannedData, setScannedData] = useState<QRPayload | null>(null);
   const [isScannerFullScreen, setIsScannerFullScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,7 +110,7 @@ export default function Kehadiran() {
       "qr-reader",
       {
         fps: 10,
-        qrbox: 250
+        qrbox: { width: 250, height: 250 }
       },
       false // Matikan mode verbose (log berisik di console)
     );
@@ -159,9 +154,13 @@ export default function Kehadiran() {
           }, 3000);
 
         } catch (error) {
-          // Jika bukan format JSON / bukan QR dari sistem kita, diamkan saja
-          console.error("Gagal membaca JSON QR:", error);
-          console.log("Isi teks yang gagal di-parse:", decodedText);
+          // ✨ BUKTIKAN BAHWA INI ADALAH SCANNER, BUKAN KAMERA BIASA!
+          setErrorMessage(decodedText);
+          setOverlayState("error");
+          setTimeout(() => {
+            setOverlayState("none");
+            setTimeout(() => { isProcessing.current = false; }, 1000);
+          }, 3500); // Tampilkan popup merah selama 3.5 detik
         }
       },
       (err) => {
@@ -398,6 +397,27 @@ export default function Kehadiran() {
                     </div>
                  </motion.div>
                )}
+
+              {/* ANIMASI 3: ERROR BUKAN TIKET */}
+              {overlayState === "error" && (
+                <motion.div
+                  key="error"
+                  initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 1.1, opacity: 0, y: -20 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  className="text-center p-8 w-full max-w-lg bg-red-600/95 rounded-3xl shadow-2xl border border-red-500 mx-4"
+                >
+                   <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <span className="text-5xl">❌</span>
+                   </div>
+                   <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Bukan Tiket Sistem!</h2>
+                   <p className="text-white/80 text-sm md:text-base leading-relaxed break-words overflow-hidden max-h-32">
+                     Teks yang terbaca:<br/>
+                     <span className="font-mono text-white mt-2 inline-block bg-black/30 px-3 py-2 rounded-lg">{errorMessage.length > 100 ? errorMessage.substring(0, 100) + '...' : errorMessage}</span>
+                   </p>
+                </motion.div>
+              )}
              </AnimatePresence>
            </motion.div>
         )}

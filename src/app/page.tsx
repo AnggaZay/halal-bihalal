@@ -679,13 +679,7 @@ export default function HalalBihalalPage() {
                                   const qrPayload = JSON.stringify({
                                     id: invitation.id,
                                     nama: name,
-                                    periode: invitation.periode,
-                                    meja: seats[i] || seats[0],
-                                    makanan: foods[i] || '-',
-                                    minuman: `${drinks[i] || '-'}${i === 0 ? legacyDrink : ''}`,
-                                    kendaraan: cleanVehicle,
-                                    parkir: parkingLoc,
-                                    asisten: asisten.nama
+                                    meja: seats[i] || seats[0]
                                   });
 
                                   return (
@@ -696,7 +690,7 @@ export default function HalalBihalalPage() {
                                         
                                         <div className="relative inline-block">
                                           <div className="p-3 bg-[#E6E2DA] border border-[#A6824A]/10 rounded-xl shadow-inner">
-                                            <QRCodeCanvas id={canvasId} value={qrPayload} size={180} level="L" />
+                                            <QRCodeCanvas id={canvasId} value={qrPayload} size={180} level="M" />
                                           </div>
                                           <button 
                                             onClick={() => downloadQR(canvasId, name)}
