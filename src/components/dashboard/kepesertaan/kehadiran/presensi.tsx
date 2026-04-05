@@ -124,8 +124,6 @@ export default function Kehadiran() {
         videoConstraints: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          // Pastikan selalu pakai kamera belakang
-          facingMode: "environment"
         }
       },
       false // Matikan mode verbose (log berisik di console)
