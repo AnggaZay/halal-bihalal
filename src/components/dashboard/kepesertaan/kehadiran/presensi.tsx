@@ -114,8 +114,13 @@ export default function Kehadiran() {
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
       {
-        fps: 10, // Kembalikan ke 10 agar memori HP tidak nge-lag/macet saat scan
-        qrbox: { width: 250, height: 250 }, // ✨ WAJIB ADA: Membatasi area scan agar proses decode 10x lipat lebih cepat & akurat
+        fps: 20, // ✨ Dipercepat lagi untuk sensitivitas maksimal
+        // ✨ Bikin kotak responsif: 80% layar. Karena QR Code berisi JSON panjang (sangat padat)
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+          return { width: Math.floor(minEdgeSize * 0.8), height: Math.floor(minEdgeSize * 0.8) };
+        },
+        videoConstraints: { width: { ideal: 1280 }, height: { ideal: 720 } }, // Minta resolusi HD minimal tanpa memaksa kamera belakang
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
         // ✨ RAHASIA NGEBUT: Fokus 100% pencarian ke QR Code saja (abaikan barcode minimarket dll)
         formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
