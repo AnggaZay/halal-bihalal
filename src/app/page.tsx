@@ -49,10 +49,22 @@ export default function HalalBihalalPage() {
   const [showForm, setShowForm] = useState(false);
   const [guestCount, setGuestCount] = useState(1);
   const isFormOpenRef = useRef(false);
+  const [isClosed, setIsClosed] = useState(false);
 
   useEffect(() => {
     isFormOpenRef.current = showForm;
   }, [showForm]);
+
+  useEffect(() => {
+    const checkDeadline = () => {
+      // Deadline: 03 April 2026, 23:59:59 WIB (+07:00)
+      const deadline = new Date('2026-04-03T23:59:59+07:00').getTime();
+      if (new Date().getTime() > deadline) setIsClosed(true);
+    };
+    checkDeadline();
+    const interval = setInterval(checkDeadline, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -237,6 +249,12 @@ export default function HalalBihalalPage() {
       setTimeout(() => {
         document.getElementById('rsvp-modal')?.scrollTo({ top: 0, behavior: 'smooth' });
       }, 100);
+      return;
+    }
+
+    if (isClosed) {
+      alert("Maaf, pendaftaran telah ditutup. Email Anda belum terdaftar.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -457,7 +475,7 @@ export default function HalalBihalalPage() {
                     onClick={() => setShowForm(true)}
                     className="pointer-events-auto px-8 py-3.5 bg-[#5D1E21] text-[#E6E2DA] rounded-full font-bold tracking-[0.2em] uppercase text-[10px] md:text-xs shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-[#A6824A]/70 hover:bg-[#A6824A] hover:text-[#101111] active:scale-95 transition-all flex items-center gap-2"
                   >
-                    <span>Konfirmasi Kehadiran</span>
+                    <span>{isClosed ? 'Lihat Tiket Masuk' : 'Konfirmasi Kehadiran'}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                     </svg>
@@ -493,15 +511,26 @@ export default function HalalBihalalPage() {
                       <div className="max-w-md mx-auto w-full px-6">
                         {!invitation ? (
                           <>
-                            <h2 className="text-3xl font-bold text-[#A6824A] mb-6 text-center drop-shadow-md">Konfirmasi Kehadiran</h2>
+                            <h2 className="text-3xl font-bold text-[#A6824A] mb-6 text-center drop-shadow-md">
+                              {isClosed ? 'Cek Tiket Masuk' : 'Konfirmasi Kehadiran'}
+                            </h2>
                             <form onSubmit={handleSubmit} className="w-full text-[#E6E2DA]">
-                              <p className="text-xs text-[#E6E2DA]/80 mb-8 text-center">Isi data baru, atau masukkan email terdaftar untuk melihat tiket Anda.</p>
+                              {isClosed ? (
+                                <div className="bg-[#5D1E21]/20 border border-[#5D1E21] p-4 rounded-xl mb-8 text-center">
+                                  <p className="text-xs text-[#E6E2DA] font-medium leading-relaxed">Pendaftaran telah ditutup pada <br/><b className="text-[#A6824A]">03 April 2026, 23:59 WIB</b>.</p>
+                                  <p className="text-[10px] text-[#E6E2DA]/70 mt-2">Silakan masukkan email terdaftar Anda untuk melihat tiket.</p>
+                                </div>
+                              ) : (
+                                <p className="text-xs text-[#E6E2DA]/80 mb-8 text-center">Isi data baru, atau masukkan email terdaftar untuk melihat tiket Anda.</p>
+                              )}
                               
                               <div className="space-y-6">
                                 <div>
                                   <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Email</label>
                                   <input name="email" type="email" required placeholder="email@contoh.com" className="w-full bg-transparent border-0 border-b-2 border-[#A6824A]/50 text-[#E6E2DA] placeholder:text-[#E6E2DA]/50 py-3 px-1 text-sm focus:outline-none focus:ring-0 focus:border-[#A6824A] transition-colors" />
                                 </div>
+                                {!isClosed && (
+                                  <>
                                 <div>
                                   <label className="block text-xs font-medium mb-1 uppercase tracking-wider text-[#A6824A]">Periode Pimpinan</label>
                                   <div className="relative">
@@ -600,12 +629,14 @@ export default function HalalBihalalPage() {
                                     </div>
                                   );
                                 })}
+                                  </>
+                                )}
                               </div>
 
                               <button disabled={isSubmitting} type="submit" className="w-full bg-[#5D1E21] hover:bg-[#A6824A] hover:text-[#101111] text-[#E6E2DA] p-4 rounded-xl font-bold tracking-wider uppercase transition-colors mt-8 shadow-[0_0_15px_rgba(166,130,74,0.2)] hover:shadow-[0_0_20px_rgba(166,130,74,0.4)] border border-transparent hover:border-[#A6824A] disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2">
                                 {isSubmitting ? 'Memproses...' : (
                                   <>
-                                    <span>Lanjut Pilih Kursi</span>
+                                    <span>{isClosed ? 'Cek Tiket Saya' : 'Lanjut Pilih Kursi'}</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
